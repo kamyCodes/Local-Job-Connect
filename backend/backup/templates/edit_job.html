@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Edit Job{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card" style="max-width:900px;margin:0 auto;padding:18px">
+        <h2>Edit Job Posting</h2>
+        
+        <form method="POST" action="{{ url_for('edit_job', job_id=job.id) }}">
+            <div class="form-group">
+                <label>Job Title *</label>
+                <input type="text" name="title" value="{{ job.title }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description *</label>
+                <textarea name="description" rows="6" required>{{ job.description }}</textarea>
+            </div>
+
+            <div class="form-row row">
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select name="category" required>
+                        <option value="Technology" {{ 'selected' if job.category == 'Technology' }}>Technology</option>
+                        <option value="Healthcare" {{ 'selected' if job.category == 'Healthcare' }}>Healthcare</option>
+                        <option value="Retail" {{ 'selected' if job.category == 'Retail' }}>Retail</option>
+                        <option value="Education" {{ 'selected' if job.category == 'Education' }}>Education</option>
+                        <option value="Data-Science" {{ 'selected' if job.category == 'Data-Science' }}>Data Science</option>
+                        <option value="Artificial Intelligence" {{ 'selected' if job.category == 'Artificial Intelligence' }}>Artificial Intelligence</option>
+                        <option value="Fashion" {{ 'selected' if job.category == 'Fashion' }}>Fashion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Employment Type *</label>
+                    <select name="employment_type" required>
+                        <option value="Full-time" {{ 'selected' if job.employment_type == 'Full-time' }}>Full-time</option>
+                        <option value="Part-time" {{ 'selected' if job.employment_type == 'Part-time' }}>Part-time</option>
+                        <option value="Contract" {{ 'selected' if job.employment_type == 'Contract' }}>Contract</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row row">
+                <div class="form-group">
+                    <label>Min Salary (₦)</label>
+                    <input type="number" name="salary_min" value="{{ job.salary_min }}">
+                </div>
+                <div class="form-group">
+                    <label>Max Salary (₦)</label>
+                    <input type="number" name="salary_max" value="{{ job.salary_max }}">
+                </div>
+            </div>
+
+            <div style="margin-top:12px">
+                <button type="submit" class="btn btn-primary">Update Job</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Apply for {{ job.title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card" style="max-width:760px;margin:0 auto;padding:18px">
+        <h2>Apply for {{ job.title }}</h2>
+        
+        <form method="POST" action="{{ url_for('apply_job', job_id=job.id) }}">
+            <div class="form-group">
+                <label>Select Resume</label>
+                <select name="resume_id" required>
+                    <option value="">Choose a resume...</option>
+                    {% for resume in resumes %}
+                    <option value="{{ resume.id }}">{{ resume.original_filename }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Cover Letter (Optional)</label>
+                <textarea name="cover_letter" rows="6" placeholder="Tell the employer why you're a great fit..."></textarea>
+            </div>
+
+            <div style="margin-top:10px">
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

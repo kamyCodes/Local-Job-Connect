@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card job-card" style="max-width: 880px; margin: 0 auto;">
+        <h1>{{ job.title }}</h1>
+        <p class="muted-small"><strong>Company:</strong> {{ job.employer.company_name }}</p>
+        {% if distance %}
+        <p class="muted-small"><strong>Distance:</strong> {{ distance }} km from you</p>
+        {% endif %}
+        <p class="muted-small"><strong>Location:</strong> {{ job.street_address }}, {{ job.city }}</p>
+        <p class="muted-small"><strong>Type:</strong> {{ job.employment_type }}</p>
+        {% if job.salary_min and job.salary_max %}
+        <p class="muted-small"><strong>Salary:</strong> ₦{{ job.salary_min }} - ₦{{ job.salary_max }}</p>
+        {% endif %}
+        
+        <h3>Description</h3>
+        <p>{{ job.description }}</p>
+
+        {% if current_user.role == 'job_seeker' %}
+        <div class="form-actions" style="margin-top:14px">
+            {% if not already_applied %}
+            <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary">Apply Now</a>
+            {% else %}
+            <span class="tag">Already Applied</span>
+            {% endif %}
+            
+            {% if not is_saved %}
+            <form method="POST" action="{{ url_for('save_job', job_id=job.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Save Job</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

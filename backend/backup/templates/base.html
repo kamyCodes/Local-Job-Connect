@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Local Job Connect{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="inner" style="position:relative">
+            <div class="brand">
+                <a href="{{ url_for('index') }}">🏘️ Local Job Connect</a>
+            </div>
+            <!-- Mobile nav toggle -->
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+            <nav class="nav" role="navigation">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'job_seeker' %}
+                        <a href="{{ url_for('search_jobs') }}">Search Jobs</a>
+                        <a href="{{ url_for('job_seeker_dashboard') }}">My Dashboard</a>
+                    {% else %}
+                        <a href="{{ url_for('create_job') }}">Post a Job</a>
+                        <a href="{{ url_for('employer_dashboard') }}">My Jobs</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-enter">
+                            <div class="message">{{ message }}</div>
+                            <button class="alert-close">×</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Local Job Connect. Strengthening local communities through employment.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <h1>Welcome, {{ current_user.full_name }}!</h1>
+        <div class="dashboard-stats" style="display:flex;gap:12px">
+            <div class="stat">
+                <div class="stat-number">{{ applications|length }}</div>
+                <div class="stat-label muted-small">Applications</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ saved_jobs|length }}</div>
+                <div class="stat-label muted-small">Saved Jobs</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Upload Resume</h2>
+    <form method="POST" action="{{ url_for('upload_resume') }}" enctype="multipart/form-data" style="margin-bottom: 2rem;display:flex;gap:8px;align-items:center">
+        <input type="file" name="resume" accept=".pdf" required>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+
+    <h2>My Applications</h2>
+    <div class="job-list">
+        {% for application in applications %}
+        <article class="job-card card">
+            <div class="top">
+                <div class="title-row">
+                    <h3>{{ application.job.title }}</h3>
+                    <p class="muted-small">{{ application.job.employer.company_name }}</p>
+                </div>
+                <div class="meta">
+                    <span class="tag">{{ application.status|replace('_', ' ')|title }}</span>
+                </div>
+            </div>
+            <p class="muted-small">Applied: {{ application.submitted_at.strftime('%B %d, %Y') }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
