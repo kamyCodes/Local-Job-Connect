@@ -14,11 +14,17 @@ from collections import defaultdict
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__)
+# Point template/static folders to the separated frontend directory
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+frontend_templates = os.path.join(base_dir, 'frontend', 'templates')
+frontend_static = os.path.join(base_dir, 'frontend', 'static')
+
+app = Flask(__name__, template_folder=frontend_templates, static_folder=frontend_static)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static/uploads/resumes'
+# Set upload folder to frontend static uploads so files are served from the frontend
+app.config['UPLOAD_FOLDER'] = os.path.join(frontend_static, 'uploads', 'resumes')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Initialize extensions
@@ -854,18 +860,6 @@ def analytics():
                          active_jobs=active_jobs,
                          paused_jobs=paused_jobs,
                          archived_jobs=archived_jobs)
-
-ALLOWED_EXTENSIONS = {'pdf'}
-ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png'}
-
-app.config['PROFILE_PICS_FOLDER'] = 'static/uploads/profile_pics'
-
-# Create the profile pics directory if it doesn't exist
-os.makedirs(app.config['PROFILE_PICS_FOLDER'], exist_ok=True)
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-def allowed_image_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
 
 
 # ============================================================================
