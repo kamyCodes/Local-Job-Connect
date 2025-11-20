@@ -2,12 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- MOBILE VIEWPORT - ESSENTIAL FOR RESPONSIVE DESIGN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Local Job Connect - Find local job opportunities in your community">
+    <meta name="keywords" content="local jobs, employment, job search, hiring">
+    
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#1e3a8a">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    
     <title>{% block title %}Local Job Connect{% endblock %}</title>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Prevent horizontal scroll on mobile */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Loading animation */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .page-loading.active {
+            display: flex;
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="page-loading">
+        <div style="text-align: center;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary-blue);"></i>
+            <p style="margin-top: 16px; color: var(--text-gray);">Loading...</p>
+        </div>
+    </div>
+
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
@@ -45,7 +97,7 @@
     <main class="main-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="container">
+                <div class="container" style="padding-top: 20px;">
                     {% for category, message in messages %}
                         <div class="alert alert-{{ category }}">
                             {{ message }}

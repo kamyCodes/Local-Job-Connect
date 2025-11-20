@@ -1,5 +1,72 @@
-// Mobile navigation toggle
+// Mobile Navigation - Add this to the top of your main.js
+
 document.addEventListener('DOMContentLoaded', function() {
+	// Create mobile menu toggle button
+	const navbar = document.querySelector('.navbar .container');
+	const navLinks = document.querySelector('.nav-links');
+	
+	if (navbar && navLinks && window.innerWidth <= 768) {
+		// Create hamburger button
+		const menuBtn = document.createElement('button');
+		menuBtn.className = 'mobile-menu-toggle';
+		menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+		menuBtn.setAttribute('aria-label', 'Toggle navigation menu');
+		menuBtn.setAttribute('aria-expanded', 'false');
+		
+		// Add styles for the button
+		menuBtn.style.cssText = `
+			position: absolute;
+			top: 16px;
+			right: 60px;
+			background: var(--primary-blue);
+			color: white;
+			border: none;
+			padding: 10px 14px;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 18px;
+			z-index: 1000;
+		`;
+		
+		// Insert button before nav-links
+		navbar.insertBefore(menuBtn, navLinks);
+		
+		// Hide nav links by default on mobile
+		navLinks.style.display = 'none';
+		
+		// Toggle menu
+		menuBtn.addEventListener('click', function() {
+			const isOpen = navLinks.style.display === 'flex';
+			navLinks.style.display = isOpen ? 'none' : 'flex';
+			this.innerHTML = isOpen ? '<i class="fas fa-bars"></i>' : '<i class="fas fa-times"></i>';
+			this.setAttribute('aria-expanded', String(!isOpen));
+		});
+		
+		// Close menu when clicking a link
+		const navLinksItems = navLinks.querySelectorAll('a');
+		navLinksItems.forEach(link => {
+			link.addEventListener('click', () => {
+				if (window.innerWidth <= 768) {
+					navLinks.style.display = 'none';
+					menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+					menuBtn.setAttribute('aria-expanded', 'false');
+				}
+			});
+		});
+		
+		// Handle window resize
+		window.addEventListener('resize', function() {
+			if (window.innerWidth > 768) {
+				navLinks.style.display = 'flex';
+				menuBtn.style.display = 'none';
+			} else {
+				navLinks.style.display = 'none';
+				menuBtn.style.display = 'block';
+			}
+		});
+	}
+	
+	// Rest of your existing code below...
 	const btn = document.querySelector('.nav-toggle');
 	const nav = document.querySelector('.nav');
 	if (!btn || !nav) return;
