@@ -1,9 +1,9 @@
-// Mobile Navigation - Add this to the top of your main.js
-
+// Mobile Navigation - FIXED VERSION
 document.addEventListener('DOMContentLoaded', function() {
 	// Create mobile menu toggle button
 	const navbar = document.querySelector('.navbar .container');
 	const navLinks = document.querySelector('.nav-links');
+	const userProfile = document.querySelector('.user-profile');
 	
 	if (navbar && navLinks && window.innerWidth <= 768) {
 		// Create hamburger button
@@ -13,11 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		menuBtn.setAttribute('aria-label', 'Toggle navigation menu');
 		menuBtn.setAttribute('aria-expanded', 'false');
 		
+		// Calculate position based on whether user is logged in
+		const rightPosition = userProfile ? '70px' : '16px';
+		
 		// Add styles for the button
 		menuBtn.style.cssText = `
 			position: absolute;
 			top: 16px;
-			right: 60px;
+			right: ${rightPosition};
 			background: var(--primary-blue);
 			color: white;
 			border: none;
@@ -26,20 +29,60 @@ document.addEventListener('DOMContentLoaded', function() {
 			cursor: pointer;
 			font-size: 18px;
 			z-index: 1000;
+			display: none;
 		`;
 		
 		// Insert button before nav-links
 		navbar.insertBefore(menuBtn, navLinks);
 		
-		// Hide nav links by default on mobile
-		navLinks.style.display = 'none';
+		// Function to update mobile menu
+		function updateMobileMenu() {
+			if (window.innerWidth <= 768) {
+				menuBtn.style.display = 'block';
+				navLinks.style.display = 'none';
+				
+				// Move user profile to top right if it exists
+				if (userProfile) {
+					userProfile.style.position = 'absolute';
+					userProfile.style.top = '12px';
+					userProfile.style.right = '16px';
+				}
+			} else {
+				menuBtn.style.display = 'none';
+				navLinks.style.display = 'flex';
+				
+				// Reset user profile position
+				if (userProfile) {
+					userProfile.style.position = 'static';
+				}
+			}
+		}
+		
+		// Initial setup
+		updateMobileMenu();
 		
 		// Toggle menu
-		menuBtn.addEventListener('click', function() {
+		menuBtn.addEventListener('click', function(e) {
+			e.stopPropagation();
 			const isOpen = navLinks.style.display === 'flex';
 			navLinks.style.display = isOpen ? 'none' : 'flex';
 			this.innerHTML = isOpen ? '<i class="fas fa-bars"></i>' : '<i class="fas fa-times"></i>';
 			this.setAttribute('aria-expanded', String(!isOpen));
+			
+			// Toggle body class for backdrop
+			document.body.classList.toggle('menu-open', !isOpen);
+		});
+		
+		// Close menu when clicking outside
+		document.addEventListener('click', function(e) {
+			if (window.innerWidth <= 768 && 
+			    navLinks.style.display === 'flex' && 
+			    !navLinks.contains(e.target) && 
+			    e.target !== menuBtn) {
+				navLinks.style.display = 'none';
+				menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+				menuBtn.setAttribute('aria-expanded', 'false');
+			}
 		});
 		
 		// Close menu when clicking a link
@@ -55,36 +98,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 		
 		// Handle window resize
-		window.addEventListener('resize', function() {
-			if (window.innerWidth > 768) {
-				navLinks.style.display = 'flex';
-				menuBtn.style.display = 'none';
-			} else {
-				navLinks.style.display = 'none';
-				menuBtn.style.display = 'block';
-			}
-		});
+		window.addEventListener('resize', updateMobileMenu);
 	}
 	
-	// Rest of your existing code below...
-	const btn = document.querySelector('.nav-toggle');
-	const nav = document.querySelector('.nav');
-	if (!btn || !nav) return;
-
-	btn.addEventListener('click', function() {
-		const isOpen = nav.classList.toggle('open');
-		btn.setAttribute('aria-expanded', String(isOpen));
-	});
-
-	// Close nav when clicking outside on small screens
-	document.addEventListener('click', function(e){
-		if (!nav.classList.contains('open')) return;
-		const target = e.target;
-		if (target === nav || nav.contains(target) || target === btn) return;
-		nav.classList.remove('open');
-		btn.setAttribute('aria-expanded','false');
-	});
-
 	// Alerts: wire close buttons and auto-dismiss success/info
 	const alerts = document.querySelectorAll('.alert');
 	alerts.forEach(alert => {

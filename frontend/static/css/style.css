@@ -1192,3 +1192,154 @@ body {
         padding: 12px;
     }
 }
+
+/* Mobile Navigation Layout Fix */
+@media (max-width: 768px) {
+    .navbar .container {
+        position: relative;
+        min-height: 60px;
+    }
+    
+    /* Keep nav brand on the left */
+    .nav-brand {
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* User profile stays top right */
+    .user-profile {
+        position: absolute !important;
+        top: 12px !important;
+        right: 16px !important;
+        z-index: 999;
+    }
+    
+    /* Hamburger menu button positioning */
+    .mobile-menu-toggle {
+        position: absolute !important;
+        top: 16px !important;
+        right: 70px !important; /* When logged in */
+        z-index: 998 !important;
+    }
+    
+    /* If not logged in, move hamburger to the right */
+    body:not(.logged-in) .mobile-menu-toggle {
+        right: 16px !important;
+    }
+    
+    /* Navigation links */
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--bg-white);
+        box-shadow: var(--shadow-lg);
+        border-radius: 0 0 16px 16px;
+        padding: 16px;
+        z-index: 997;
+    }
+    
+    /* Make sure links don't have the user profile inside */
+    .nav-links .user-profile {
+        display: none !important;
+    }
+    
+    /* Ensure nav links stack properly */
+    .nav-links {
+        flex-direction: column;
+    }
+    
+    .nav-links a {
+        width: 100%;
+        padding: 14px 16px;
+        text-align: left;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .nav-links a:hover {
+        background: var(--bg-light);
+        transform: translateX(4px);
+    }
+    
+    /* Icon spacing in mobile menu */
+    .nav-links a i {
+        width: 20px;
+        margin-right: 8px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+    .nav-brand a {
+        font-size: 16px;
+    }
+    
+    .nav-brand svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .user-profile {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 16px !important;
+    }
+    
+    .mobile-menu-toggle {
+        right: 56px !important;
+        padding: 8px 12px !important;
+        font-size: 16px !important;
+    }
+}
+
+/* Smooth transitions */
+.nav-links,
+.mobile-menu-toggle,
+.user-profile {
+    transition: all 0.3s ease;
+}
+
+/* Mobile menu animation */
+@media (max-width: 768px) {
+    .nav-links {
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* Prevent body scroll when menu is open */
+body.menu-open {
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    /* Add backdrop when menu is open */
+    body.menu-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 996;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+}
