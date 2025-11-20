@@ -26,6 +26,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Set upload folder to frontend static uploads so files are served from the frontend
 app.config['UPLOAD_FOLDER'] = os.path.join(frontend_static, 'uploads', 'resumes')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+
+# Database Configuration - Replace existing DATABASE_URL line with this:
+database_url = os.getenv('DATABASE_URL')
+
+# Fix for Render/Railway PostgreSQL URLs
+if database_url and database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+# Use PostgreSQL in production, SQLite locally
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///local_job_connect.db'
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -34,6 +45,8 @@ login_manager.login_view = 'login'
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pdf'}
+
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
