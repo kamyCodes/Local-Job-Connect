@@ -883,3 +883,11 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+# Initialize database tables when app starts (for production)
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ Database tables initialized")
+    except Exception as e:
+        print(f"❌ Database initialization error: {e}")
