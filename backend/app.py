@@ -601,18 +601,19 @@ def create_job():
         employment_type = request.form.get('employment_type')
         salary_min = request.form.get('salary_min')
         salary_max = request.form.get('salary_max')
-        street_address = request.form.get('street_address')
-        city = request.form.get('city')
-        zip_code = request.form.get('zip_code')
-        
-        lat, lng = geocode_address(street_address, city, zip_code)
+        # Use employer's location
+        street_address = current_user.address
+        city = current_user.city
+        zip_code = current_user.zip_code
+        lat = current_user.latitude
+        lng = current_user.longitude
         
         if not lat or not lng:
-            flash('Could not verify address. Please check and try again.', 'error')
-            return redirect(url_for('create_job'))
+            flash('Your company profile is missing location data. Please update your profile first.', 'error')
+            return redirect(url_for('edit_profile'))
         
         if not is_within_service_area(lat, lng):
-            flash('This location is outside our service area!', 'error')
+            flash('Your location is outside our service area!', 'error')
             return redirect(url_for('create_job'))
         
         job = JobPosting(
