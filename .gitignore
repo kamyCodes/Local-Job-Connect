@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Environment files - IMPORTANT: Don't commit secrets!
+.env
+backend/.env
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+local_job_connect.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# User uploaded files
+frontend/static/uploads/resumes/*
+!frontend/static/uploads/resumes/.gitkeep

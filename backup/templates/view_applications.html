@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Applications for: {{ job.title }}</h1>
+    
+    <div class="job-list">
+        {% for application in applications %}
+        <article class="job-card card">
+            <div class="top">
+                <div class="title-row">
+                    <h3>{{ application.applicant.full_name }}</h3>
+                    <p class="muted-small">Email: {{ application.applicant.email }} • Phone: {{ application.applicant.phone }}</p>
+                </div>
+                <div class="meta">
+                    <span class="muted-small">Applied: {{ application.submitted_at.strftime('%B %d, %Y') }}</span>
+                </div>
+            </div>
+            
+            {% if application.cover_letter %}
+            <p><strong>Cover Letter:</strong> {{ application.cover_letter }}</p>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('update_application_status', application_id=application.id) }}" style="margin-top:8px">
+                <label class="muted-small">Status:</label>
+                <select name="status">
+                    <option value="applied" {{ 'selected' if application.status == 'applied' }}>Applied</option>
+                    <option value="under_review" {{ 'selected' if application.status == 'under_review' }}>Under Review</option>
+                    <option value="interview" {{ 'selected' if application.status == 'interview' }}>Interview</option>
+                    <option value="rejected" {{ 'selected' if application.status == 'rejected' }}>Rejected</option>
+                    <option value="accepted" {{ 'selected' if application.status == 'accepted' }}>Accepted</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+            </form>
+            
+            {% if application.resume %}
+            <a href="{{ url_for('download_resume', filename=application.resume.filename) }}" class="btn btn-secondary" style="margin-top:8px;display:inline-block">Download Resume</a>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

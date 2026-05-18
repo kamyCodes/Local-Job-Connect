@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Search Jobs{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="search-card card">
+        <form method="GET" action="{{ url_for('search_jobs') }}" style="width:100%">
+            <div class="form-row row">
+                <div class="form-group">
+                    <label>Keyword</label>
+                    <input type="text" name="keyword" value="{{ keyword }}" placeholder="Job title or description">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category">
+                        <option value="">All Categories</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Data-Science">Data Science</option>
+                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Education">Education</option>
+                        <option value="Fashion">Fashion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Radius (km)</label>
+                    <input type="number" name="radius" value="{{ radius }}" min="1" max="1000">
+                </div>
+                <div class="form-group form-actions" style="align-items:end">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <h2 class="mt-8">{{ jobs_with_distance|length }} Jobs Found</h2>
+    <div class="job-list">
+        {% for item in jobs_with_distance %}
+        <article class="job-card card">
+            <div class="top">
+                <div class="title-row">
+                    <h3>{{ item.job.title }}</h3>
+                    <p class="muted-small">{{ item.job.employer.company_name }}</p>
+                </div>
+                <div class="meta">
+                    <span class="muted">{{ item.distance }} km away</span>
+                </div>
+            </div>
+            <p>{{ item.job.description[:150] }}...</p>
+            <div class="form-actions" style="margin-top:10px">
+                <a href="{{ url_for('view_job', job_id=item.job.id) }}" class="btn btn-primary">View Details</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

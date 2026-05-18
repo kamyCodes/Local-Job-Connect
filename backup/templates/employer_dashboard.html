@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Employer Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <h1>{{ current_user.company_name }}</h1>
+        <a href="{{ url_for('create_job') }}" class="btn btn-primary">Post New Job</a>
+    </div>
+
+    <h2>Your Job Postings</h2>
+    <div class="job-list">
+        {% for item in jobs_with_counts %}
+        <article class="job-card card">
+            <div class="top">
+                <div class="title-row">
+                    <h3>{{ item.job.title }}</h3>
+                    <p class="muted-small">{{ item.application_count }} applications</p>
+                </div>
+                <div class="meta">
+                    <span class="tag">{{ item.job.status|title }}</span>
+                </div>
+            </div>
+            <p>{{ item.job.description[:100] }}...</p>
+            <div class="form-actions" style="margin-top:10px">
+                <a href="{{ url_for('view_applications', job_id=item.job.id) }}" class="btn btn-primary">View Applications</a>
+                <a href="{{ url_for('edit_job', job_id=item.job.id) }}" class="btn btn-secondary">Edit</a>
+                <form method="POST" action="{{ url_for('toggle_job_status', job_id=item.job.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">
+                        {{ 'Activate' if item.job.status == 'paused' else 'Pause' }}
+                    </button>
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
