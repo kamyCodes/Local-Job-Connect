@@ -1,12 +1,12 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from .extensions import db, login_manager
-from .models import User
-from .routes.auth import auth_bp
-from .routes.seeker import seeker_bp
-from .routes.employer import employer_bp
-from .routes.main import main_bp
+from extensions import db, login_manager
+from models import User
+from routes.auth import auth_bp
+from routes.seeker import seeker_bp
+from routes.employer import employer_bp
+from routes.main import main_bp
 
 def create_app():
     load_dotenv()

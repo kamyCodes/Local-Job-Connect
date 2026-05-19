@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from ..models import User
-from ..extensions import db
-from ..utils import geocode_address
+from models import User
+from extensions import db
+from utils import geocode_address
 
 main_bp = Blueprint('main', __name__)
 

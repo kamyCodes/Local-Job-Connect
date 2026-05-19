@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
-from ..models import User
-from ..extensions import db
-from ..utils import geocode_address
+from models import User
+from extensions import db
+from utils import geocode_address
 
 auth_bp = Blueprint('auth', __name__)
 

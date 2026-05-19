@@ -3,9 +3,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
-from ..models import JobPosting, Application, SavedJob, Resume
-from ..extensions import db
-from ..utils import calculate_distance, role_required
+from models import JobPosting, Application, SavedJob, Resume
+from extensions import db
+from utils import calculate_distance, role_required
 
 seeker_bp = Blueprint('seeker', __name__)
 

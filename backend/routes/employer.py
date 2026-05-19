@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from datetime import datetime
 from collections import defaultdict
-from ..models import JobPosting, Application, Resume
-from ..extensions import db
-from ..utils import role_required, is_within_service_area
+from models import JobPosting, Application, Resume
+from extensions import db
+from utils import role_required, is_within_service_area
 
 employer_bp = Blueprint('employer', __name__)
 
