@@ -1,36 +1,71 @@
-# Python
+# ==============================================================================
+# LOCAL JOB CONNECT - GITIGNORE
+# ==============================================================================
+
+# Python Cache & Compiled Files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
 *.egg-info/
 dist/
 build/
+develop-eggs/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 
-# Environment files - IMPORTANT: Don't commit secrets!
+# Virtual Environments
+env/
+venv/
+ENV/
+.venv/
+.env/
+active_env/
+
+# Flask & Environment Secrets
 .env
+.env.*
 backend/.env
+instance/
+.flaskenv
 
-# Database files
+# Local Databases (SQLite)
 *.db
 *.sqlite
 *.sqlite3
 local_job_connect.db
+local_job_connect.db-journal
 
-# IDE
+# Testing & Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.tox/
+.noserc
+nosetests.xml
+
+# IDE & Editor Configs
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
 
-# OS
+# Operating System Files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# User uploaded files
+# User Uploaded Resumes (Keep directory structure but ignore files)
 frontend/static/uploads/resumes/*
 !frontend/static/uploads/resumes/.gitkeep
