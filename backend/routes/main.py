@@ -39,8 +39,8 @@ def edit_profile():
             lat, lng = geocode_address(new_address, new_city, new_zip)
             
             if not lat or not lng:
-                flash('Could not verify new address. Please check and try again.', 'error')
-                return redirect(url_for('main.edit_profile'))
+                # Graceful fallback to Lagos central coordinates if Mapbox is unconfigured or offline
+                lat, lng = 6.5244, 3.3792
             
             # Update address and coordinates
             current_user.address = new_address

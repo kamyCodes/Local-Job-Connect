@@ -83,8 +83,8 @@
         {% endif %}
         <a href="{{ url_for('main.profile') }}"><i class="fas fa-user-circle"></i> Profile</a>
         <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        <div class="user-profile">
-            {{ current_user.full_name[0].upper() }}
+        <div class="user-profile" title="{{ current_user.full_name or current_user.email }}">
+            {{ (current_user.full_name or current_user.email or "U")[0].upper() }}
         </div>
     {% else %}
         {% if request.endpoint != 'auth.login' %}

@@ -41,8 +41,8 @@ def register():
         lat, lng = geocode_address(address, city, zip_code)
         
         if not lat or not lng:
-            flash('Could not verify address. Please check and try again.', 'error')
-            return redirect(url_for('auth.register'))
+            # Graceful fallback to Lagos central coordinates if Mapbox is unconfigured or geocoding fails
+            lat, lng = 6.5244, 3.3792
         
         user = User(
             email=email,

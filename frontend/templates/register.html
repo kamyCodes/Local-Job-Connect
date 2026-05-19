@@ -6,7 +6,7 @@
 <style>
     .register-banner {
         position: relative;
-        background: url("{{ url_for('static', filename='images/carousel_seeker.png') }}") center/cover no-repeat;
+        background: url("{{ url_for('static', filename='images/carousel_seeker.jpg') }}") center/cover no-repeat;
         display: flex;
         align-items: flex-end;
         padding: 40px;
@@ -119,8 +119,8 @@
 
 <script>
     // Dynamic banner image assets
-    const seekerImg = "{{ url_for('static', filename='images/carousel_seeker.png') }}";
-    const employerImg = "{{ url_for('static', filename='images/carousel_employer.png') }}";
+    const seekerImg = "{{ url_for('static', filename='images/carousel_seeker.jpg') }}";
+    const employerImg = "{{ url_for('static', filename='images/carousel_employer.jpg') }}";
 
     // Handle role tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
