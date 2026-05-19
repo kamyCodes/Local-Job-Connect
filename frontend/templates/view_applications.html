@@ -2,7 +2,7 @@
 {% block title %}Applications - Local Job Connect{% endblock %}
 {% block content %}
 <div class="container" style="padding: 40px 0;">
-    <a href="{{ url_for('employer_dashboard') }}" style="color: var(--primary-blue); text-decoration: none; font-weight: 600; margin-bottom: 24px; display: inline-block;">
+    <a href="{{ url_for('employer.employer_dashboard') }}" style="color: var(--primary-blue); text-decoration: none; font-weight: 600; margin-bottom: 24px; display: inline-block;">
         <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
     
@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="{{ url_for('download_resume', filename=resume.filename) }}" 
+                            <a href="{{ url_for('employer.download_resume', filename=resume.filename) }}" 
                                class="btn btn-secondary" 
                                style="padding: 8px 16px; font-size: 14px;"
                                download>
@@ -101,7 +101,7 @@
                 {% endif %}
                 
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <form method="POST" action="{{ url_for('update_application_status', application_id=application.id) }}" style="display: flex; gap: 12px; align-items: center; flex: 1;">
+                    <form method="POST" action="{{ url_for('employer.update_application_status', application_id=application.id) }}" style="display: flex; gap: 12px; align-items: center; flex: 1;">
                         <label style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
                             <i class="fas fa-tasks"></i> Update Status:
                         </label>

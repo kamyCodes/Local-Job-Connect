@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container" style="padding: 40px 0;">
     <div style="max-width: 900px; margin: 0 auto;">
-        <a href="{{ url_for('search_jobs') }}" style="color: var(--primary-blue); text-decoration: none; font-weight: 600; margin-bottom: 24px; display: inline-block;">
+        <a href="{{ url_for('seeker.search_jobs') }}" style="color: var(--primary-blue); text-decoration: none; font-weight: 600; margin-bottom: 24px; display: inline-block;">
             <i class="fas fa-arrow-left"></i> Back to Search
         </a>
         
@@ -74,11 +74,11 @@
             <div style="border-top: 2px solid var(--border-light); padding-top: 32px;">
                 {% if not already_applied %}
                 <div style="display: flex; gap: 12px;">
-                    <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary btn-large" style="flex: 1;">
+                    <a href="{{ url_for('seeker.apply_job', job_id=job.id) }}" class="btn btn-primary btn-large" style="flex: 1;">
                         <i class="fas fa-paper-plane"></i> Apply Now
                     </a>
                     {% if not is_saved %}
-                    <form method="POST" action="{{ url_for('save_job', job_id=job.id) }}" style="display: inline;">
+                    <form method="POST" action="{{ url_for('seeker.save_job', job_id=job.id) }}" style="display: inline;">
                         <button type="submit" class="btn btn-secondary btn-large">
                             <i class="fas fa-heart"></i> Save Job
                         </button>

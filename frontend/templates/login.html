@@ -3,38 +3,65 @@
 {% block title %}Login - Local Job Connect{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="form-container-small">
-        <h2>Welcome Back</h2>
-        <p style="text-align: center; color: var(--text-gray); margin-bottom: 32px;">
-            Login to continue your local job connection.
-        </p>
-        
-        <form method="POST" action="{{ url_for('login') }}">
-            <div class="form-group">
-                <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required autofocus>
+<style>
+    .login-banner {
+        position: relative;
+        background: url("{{ url_for('static', filename='images/carousel_seeker.png') }}") center/cover no-repeat;
+        display: flex;
+        align-items: flex-end;
+        padding: 40px;
+        color: white;
+    }
+    @media (max-width: 768px) {
+        .login-banner {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="container" style="max-width: 1100px; padding: 40px 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); background: var(--bg-white); border-radius: 24px; box-shadow: var(--shadow-xl); overflow: hidden; min-height: 620px;">
+        <!-- Left Column: Background Image (hides on mobile) -->
+        <div class="login-banner">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); z-index: 1;"></div>
+            <div style="position: relative; z-index: 2;">
+                <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 12px; color: white; line-height: 1.2;">Lagos's Premier Local Job Network</h2>
+                <p style="font-size: 16px; opacity: 0.95; line-height: 1.5;">Reduce commute times. Support community businesses. Work close to home.</p>
             </div>
+        </div>
+        <!-- Right Column: Login Form -->
+        <div style="padding: 60px 40px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); text-align: left;">Welcome Back</h2>
+            <p style="color: var(--text-gray); margin-bottom: 32px; font-size: 15px;">
+                Login to continue your local job connection.
+            </p>
             
-            <div class="form-group">
-                <label for="password"><i class="fas fa-lock"></i> Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required autofocus>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full btn-large">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
             
-            <button type="submit" class="btn btn-primary btn-full btn-large">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-        </form>
-        
-        <div style="text-align: center; margin: 24px 0; color: var(--text-gray);">OR</div>
-        
-        <a href="{{ url_for('register') }}" class="btn btn-secondary btn-full btn-large">
-            <i class="fas fa-user-plus"></i> Create New Account
-        </a>
-        
-        <p class="form-footer">
-            Don't have an account? <a href="{{ url_for('register') }}">Sign up here</a>
-        </p>
+            <div style="text-align: center; margin: 20px 0; color: var(--text-gray); font-size: 14px; font-weight: 600;">OR</div>
+            
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary btn-full btn-large">
+                <i class="fas fa-user-plus"></i> Create New Account
+            </a>
+            
+            <p class="form-footer" style="margin-top: 24px; font-size: 14px;">
+                Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">Sign up here</a>
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}

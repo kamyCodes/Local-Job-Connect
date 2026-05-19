@@ -5,7 +5,7 @@
     <div class="card" style="max-width:900px;margin:0 auto;padding:18px">
         <h2>Post a New Job</h2>
         
-        <form method="POST" action="{{ url_for('create_job') }}">
+        <form method="POST" action="{{ url_for('employer.create_job') }}">
             <div class="form-group">
                 <label>Job Title *</label>
                 <input type="text" name="title" required>

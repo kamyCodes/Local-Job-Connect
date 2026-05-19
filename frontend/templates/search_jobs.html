@@ -8,7 +8,7 @@
         </h1>
         <p style="color: var(--text-gray); margin-bottom: 24px;">Discover opportunities right in your neighborhood</p>
         
-        <form method="GET" action="{{ url_for('search_jobs') }}" class="search-bar">
+        <form method="GET" action="{{ url_for('seeker.search_jobs') }}" class="search-bar">
             <input type="text" name="keyword" value="{{ keyword }}" placeholder="Job title, keywords, or company" class="search-input">
             <select name="category" class="search-input" style="max-width: 200px;">
                 <option value="">All Categories</option>
@@ -78,10 +78,10 @@
             <p class="job-description">{{ item.job.description[:200] }}...</p>
             
             <div class="job-actions">
-                <a href="{{ url_for('view_job', job_id=item.job.id) }}" class="btn btn-primary">
+                <a href="{{ url_for('seeker.view_job', job_id=item.job.id) }}" class="btn btn-primary">
                     <i class="fas fa-eye"></i> View Details
                 </a>
-                <form method="POST" action="{{ url_for('save_job', job_id=item.job.id) }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('seeker.save_job', job_id=item.job.id) }}" style="display: inline;">
                     <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-heart"></i> Save
                     </button>
@@ -97,7 +97,7 @@
         <p style="color: var(--text-gray); font-size: 16px; margin-bottom: 24px;">
             Try adjusting your search criteria or increase the radius
         </p>
-        <a href="{{ url_for('search_jobs') }}" class="btn btn-primary">
+        <a href="{{ url_for('seeker.search_jobs') }}" class="btn btn-primary">
             <i class="fas fa-redo"></i> Clear Filters
         </a>
     </div>

@@ -63,7 +63,7 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="{{ url_for('index') }}">
+                <a href="{{ url_for('main.index') }}">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="32" height="32" rx="8" fill="#1e3a8a"/>
                         <path d="M16 8L8 14V24H12V20H20V24H24V14L16 8Z" fill="white"/>
@@ -74,21 +74,25 @@
             <div class="nav-links">
     {% if current_user.is_authenticated %}
         {% if current_user.role == 'job_seeker' %}
-            <a href="{{ url_for('search_jobs') }}"><i class="fas fa-search"></i> Browse Jobs</a>
-            <a href="{{ url_for('job_seeker_dashboard') }}"><i class="fas fa-briefcase"></i> My Applications</a>
+            <a href="{{ url_for('seeker.search_jobs') }}"><i class="fas fa-search"></i> Browse Jobs</a>
+            <a href="{{ url_for('seeker.job_seeker_dashboard') }}"><i class="fas fa-briefcase"></i> My Applications</a>
         {% else %}
-            <a href="{{ url_for('create_job') }}"><i class="fas fa-plus-circle"></i> Post Job</a>
-            <a href="{{ url_for('employer_dashboard') }}"><i class="fas fa-building"></i> My Jobs</a>
-            <a href="{{ url_for('analytics') }}"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="{{ url_for('employer.create_job') }}"><i class="fas fa-plus-circle"></i> Post Job</a>
+            <a href="{{ url_for('employer.employer_dashboard') }}"><i class="fas fa-building"></i> My Jobs</a>
+            <a href="{{ url_for('employer.analytics') }}"><i class="fas fa-chart-line"></i> Analytics</a>
         {% endif %}
-        <a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i> Profile</a>
-        <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="{{ url_for('main.profile') }}"><i class="fas fa-user-circle"></i> Profile</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
         <div class="user-profile">
             {{ current_user.full_name[0].upper() }}
         </div>
     {% else %}
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a>
+        {% if request.endpoint != 'auth.login' %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+        {% endif %}
+        {% if request.endpoint != 'auth.register' %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Sign Up</a>
+        {% endif %}
     {% endif %}
 </div>
         </div>
@@ -113,7 +117,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Local Job Connect. Empowering communities through local opportunities.</p>
+            <p>&copy; 2026 Local Job Connect. Empowering communities through local opportunities.</p>
         </div>
     </footer>
 
