@@ -41,8 +41,8 @@ def register():
         lat, lng = geocode_address(address, city, zip_code)
         
         if not lat or not lng:
-            # Graceful fallback to Lagos central coordinates if Mapbox is unconfigured or geocoding fails
-            lat, lng = 6.5244, 3.3792
+            # Graceful fallback to Abuja coordinates (centre of Nigeria) if Mapbox is unconfigured or geocoding fails
+            lat, lng = 9.0765, 7.3986
         
         user = User(
             email=email,

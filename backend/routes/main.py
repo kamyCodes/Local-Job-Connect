@@ -39,8 +39,8 @@ def edit_profile():
             lat, lng = geocode_address(new_address, new_city, new_zip)
             
             if not lat or not lng:
-                # Graceful fallback to Lagos central coordinates if Mapbox is unconfigured or offline
-                lat, lng = 6.5244, 3.3792
+                # Graceful fallback to Abuja coordinates (centre of Nigeria) if Mapbox is unconfigured or offline
+                lat, lng = 9.0765, 7.3986
             
             # Update address and coordinates
             current_user.address = new_address

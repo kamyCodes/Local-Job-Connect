@@ -42,13 +42,18 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 
 def is_within_service_area(lat, lng):
-    """Check if location is within defined service area"""
-    center_lat = float(os.getenv('SERVICE_AREA_CENTER_LAT', 0))
-    center_lng = float(os.getenv('SERVICE_AREA_CENTER_LNG', 0))
-    max_radius = float(os.getenv('SERVICE_AREA_RADIUS_KM', 50))
-    
-    distance = calculate_distance(center_lat, center_lng, lat, lng)
-    return distance <= max_radius
+    """Check if location is within defined service area.
+    Defaults to nationwide (all of Nigeria) when env vars are not configured."""
+    center_lat = os.getenv('SERVICE_AREA_CENTER_LAT')
+    center_lng = os.getenv('SERVICE_AREA_CENTER_LNG')
+    max_radius = os.getenv('SERVICE_AREA_RADIUS_KM')
+
+    # If no service area is configured, allow the whole country
+    if not center_lat or not center_lng or not max_radius:
+        return True
+
+    distance = calculate_distance(float(center_lat), float(center_lng), lat, lng)
+    return distance <= float(max_radius)
 
 
 def role_required(*roles):
