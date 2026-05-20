@@ -1,4 +1,8 @@
-# 🏡 Local Job Connect
+<p align="center">
+  <img src="frontend/static/images/logo.png" width="128" height="128" alt="Local Job Connect Logo">
+</p>
+
+# Local Job Connect
 
 [![Flask](https://img.shields.github.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Python](https://img.shields.github.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
@@ -9,13 +13,13 @@
 
 ---
 
-## ✨ Features & Capabilities
+## Features & Capabilities
 
-### 📍 Intelligent Location Matching
+### Intelligent Location Matching
 *   **Geodesic Distance Calculations**: Utilizes the mathematical **Haversine Formula** to compute real-time geodesic distances (in kilometers) between job seekers and listed opportunities.
 *   **Proximity-Based Search**: Filters and ranks job opportunities based on strict geographic distance thresholds, allowing users to find work right in their neighborhood.
 
-### 💼 Dual-Portal Architecture
+### Dual-Portal Architecture
 *   **Job Seeker Hub**:
     *   Dynamic dashboard to manage personal profile, upload resumes, and track live applications.
     *   Upload constraints ensuring a clean database (maximum of 3 resumes per user, safe file naming extensions).
@@ -24,7 +28,7 @@
     *   Interactive candidate tracking pipeline to review resumes, inspect details, and update application statuses (Pending, Accepted, Rejected).
     *   **Dynamic Business Analytics**: Real-time analytical tracking visualizing applicant numbers, status distributions, and category engagement metrics.
 
-### 🎨 Premium User Experience & Micro-Animations
+### Premium User Experience & Micro-Animations
 *   **Visual Frontpage Hero**: Seamless auto-advancing slide carousel featuring high-resolution neighborhood workspace illustrations with smooth crossfade CSS transitions.
 *   **Dynamic Split-Screen Onboarding**: A responsive dual-pane grid layout for Login and Register pages.
 *   **Tab-Controlled Graphic Swapping**: The registration banner dynamically swaps background graphics (Job Seeker co-working vs. Employer handshakes) and tailored content depending on which role tab is currently active.
@@ -32,7 +36,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 *   **Core Framework**: Python 3.12, Flask
 *   **Database & ORM**: SQLite (backed by Flask-SQLAlchemy with performant multi-column indexes on key search vectors like `email`, `city`, and `category`)
@@ -41,7 +45,7 @@
 
 ---
 
-## 📂 Codebase Structure
+## Codebase Structure
 
 The project has been refactored from a single-file script into a clean, modular package structure following Flask best practices (App Factory pattern):
 
@@ -67,18 +71,18 @@ Local-Job-Connect/
 │   └── templates/          # Jinja2 templates organized by structural blueprint scopes
 │
 ├── run.py                  # Console-safe entrypoint (Unicode-safe for CP1252 consoles)
-├── requirements.txt        # Package dependencies
+│   ├── requirements.txt    # Package dependencies
 └── README.md               # Dynamic project documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 📋 Prerequisites
+### Prerequisites
 *   Python 3.12+ installed on your system.
 
-### ⚙️ Installation & Setup
+### Installation & Setup
 
 1.  **Clone the Repository**:
     ```bash
@@ -109,12 +113,12 @@ Local-Job-Connect/
 
 ---
 
-## 🔒 Security Practices
+## Security Practices
 *   **Strict Secrets Separation**: The database configuration is set to load variables securely, falling back to local SQLite files when environment values are empty.
 *   **Password Hashing**: Direct plain-text password storage is barred; all credentials utilize cryptographic salting via PBKDF2 algorithms.
 *   **File Extension Filtering**: Resume uploads are vetted using custom white-listed format guards (PDF, DOCX) and safe system-naming utilities to prevent shell injections.
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

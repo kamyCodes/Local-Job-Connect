@@ -26,17 +26,18 @@ def register():
         city = request.form.get('city')
         zip_code = request.form.get('zip_code')
         
+        errors = {}
         if password != confirm_password:
-            flash('Passwords do not match!', 'error')
-            return redirect(url_for('auth.register'))
+            errors['confirm_password'] = 'Passwords do not match!'
         
         if len(password) < 8:
-            flash('Password must be at least 8 characters long!', 'error')
-            return redirect(url_for('auth.register'))
+            errors['password'] = 'Password must be at least 8 characters long!'
         
         if User.query.filter_by(email=email).first():
-            flash('Email already registered!', 'error')
-            return redirect(url_for('auth.register'))
+            errors['email'] = 'Email already registered!'
+            
+        if errors:
+            return render_template('register.html', errors=errors)
         
         lat, lng = geocode_address(address, city, zip_code)
         

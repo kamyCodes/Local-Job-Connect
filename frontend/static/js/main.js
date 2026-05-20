@@ -112,14 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 		}
 
-		// Auto-dismiss success/info alerts after 5s
-		if (alert.classList.contains('alert-success') || alert.classList.contains('alert-info')){
-			setTimeout(()=>{
-				if (!document.body.contains(alert)) return;
-				alert.classList.add('closing');
-				setTimeout(()=>alert.remove(), 300);
-			}, 5000);
-		}
+		// Auto-dismiss all floating alerts after exactly 3.09s (3090ms)
+		setTimeout(()=>{
+			if (!document.body.contains(alert)) return;
+			alert.classList.add('closing');
+			setTimeout(()=>alert.remove(), 300);
+		}, 3090);
 	});
 
 	// ── Required-field red border on failed submit ──────────────────────────
@@ -128,8 +126,70 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (!form.checkValidity()) {
 				e.preventDefault();
 				form.classList.add('was-validated');
+				
+				// Force validation check on all fields immediately
+				form.querySelectorAll('.input-wrapper input, .input-wrapper select, .input-wrapper textarea').forEach(input => {
+					const event = new Event('input', { bubbles: true });
+					input.dispatchEvent(event);
+				});
 			}
 		});
+	});
+
+	// ── Real-time input validation feedback with correct/wrong icons ──────────
+	document.querySelectorAll('.form-group').forEach(group => {
+		const input = group.querySelector('input, select, textarea');
+		if (!input) return;
+
+		// Skip hidden inputs and buttons
+		if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button') return;
+
+		// Create wrapper
+		const wrapper = document.createElement('div');
+		wrapper.className = 'input-wrapper';
+		
+		// Create feedback icon
+		const icon = document.createElement('i');
+		icon.className = 'validation-icon';
+		
+		// Insert wrapper in place of input
+		input.parentNode.insertBefore(wrapper, input);
+		wrapper.appendChild(input);
+		wrapper.appendChild(icon);
+
+		// Adjust padding to make room for icon
+		input.style.paddingRight = '40px';
+
+		// Real-time validation handler
+		function validateField() {
+			const val = input.value.trim();
+			
+			// If empty, hide icon and clear custom visual borders
+			if (val === '') {
+				icon.className = 'validation-icon';
+				input.style.borderColor = '';
+				input.style.boxShadow = '';
+				return;
+			}
+
+			if (input.checkValidity()) {
+				icon.className = 'validation-icon fas fa-check-circle valid';
+				input.style.borderColor = 'var(--success-green)';
+				input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.08)';
+			} else {
+				icon.className = 'validation-icon fas fa-times-circle invalid';
+				input.style.borderColor = 'var(--danger-red)';
+				input.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.08)';
+			}
+		}
+
+		input.addEventListener('input', validateField);
+		input.addEventListener('blur', validateField);
+		
+		// Run once initially if field already contains a value on load
+		if (input.value) {
+			validateField();
+		}
 	});
 });
 

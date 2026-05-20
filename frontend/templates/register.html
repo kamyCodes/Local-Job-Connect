@@ -47,37 +47,55 @@
                     </button>
                 </div>
                 
-                <input type="hidden" name="role" id="roleInput" value="job_seeker">
+                <input type="hidden" name="role" id="roleInput" value="{{ request.form.get('role', 'job_seeker') }}">
                 
                 <div class="form-group">
                     <label for="full_name"><i class="fas fa-user"></i> Full Name *</label>
-                    <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                    <input type="text" id="full_name" name="full_name" value="{{ request.form.get('full_name', '') }}" placeholder="Enter your full name" required>
+                    {% if errors and errors.full_name %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.full_name }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label for="email"><i class="fas fa-envelope"></i> Email Address *</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                    <input type="email" id="email" name="email" value="{{ request.form.get('email', '') }}" placeholder="Enter your email address" required>
+                    {% if errors and errors.email %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.email }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
-                    <input type="tel" id="phone" name="phone" placeholder="08012345678">
+                    <input type="tel" id="phone" name="phone" value="{{ request.form.get('phone', '') }}" placeholder="08012345678">
+                    {% if errors and errors.phone %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.phone }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label for="address"><i class="fas fa-map-marker-alt"></i> Street Address *</label>
-                    <input type="text" id="address" name="address" placeholder="15 Awolowo Road" required>
+                    <input type="text" id="address" name="address" value="{{ request.form.get('address', '') }}" placeholder="15 Awolowo Road" required>
+                    {% if errors and errors.address %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.address }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="city">City *</label>
-                        <input type="text" id="city" name="city" placeholder="e.g. Abuja, Lagos, Kano" required>
+                        <input type="text" id="city" name="city" value="{{ request.form.get('city', '') }}" placeholder="e.g. Abuja, Lagos, Kano" required>
+                        {% if errors and errors.city %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.city }}</span>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
                         <label for="zip_code">ZIP Code *</label>
-                        <input type="text" id="zip_code" name="zip_code" placeholder="101233" required>
+                        <input type="text" id="zip_code" name="zip_code" value="{{ request.form.get('zip_code', '') }}" placeholder="101233" required>
+                        {% if errors and errors.zip_code %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.zip_code }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -85,12 +103,15 @@
                 <div id="employerFields" style="display: none;">
                     <div class="form-group">
                         <label for="company_name"><i class="fas fa-building"></i> Company Name *</label>
-                        <input type="text" id="company_name" name="company_name" placeholder="Your company name">
+                        <input type="text" id="company_name" name="company_name" value="{{ request.form.get('company_name', '') }}" placeholder="Your company name">
+                        {% if errors and errors.company_name %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.company_name }}</span>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
                         <label for="company_description">Company Description</label>
-                        <textarea id="company_description" name="company_description" rows="3" placeholder="Brief description of your company"></textarea>
+                        <textarea id="company_description" name="company_description" rows="3" placeholder="Brief description of your company">{{ request.form.get('company_description', '') }}</textarea>
                     </div>
                 </div>
                 
@@ -98,11 +119,17 @@
                     <label for="password"><i class="fas fa-lock"></i> Password *</label>
                     <input type="password" id="password" name="password" placeholder="Create a strong password" required minlength="8">
                     <small>Minimum 8 characters with uppercase, lowercase, and special characters</small>
+                    {% if errors and errors.password %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.password }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 28px;">
                     <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password *</label>
                     <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" required>
+                    {% if errors and errors.confirm_password %}
+                    <span class="field-error-hint" style="display: block;">{{ errors.confirm_password }}</span>
+                    {% endif %}
                 </div>
                 
                 <button type="submit" class="btn btn-primary btn-full btn-large">
@@ -159,23 +186,40 @@
     
     // Password validation
     document.getElementById('registerForm').addEventListener('submit', function(e) {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
+        // Clear any old dynamically added front-end errors
+        document.querySelectorAll('.fe-error-hint').forEach(el => el.remove());
         
-        if (password !== confirmPassword) {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        
+        let hasError = false;
+        
+        if (password.value !== confirmPassword.value) {
             e.preventDefault();
-            alert('Passwords do not match!');
-            return;
+            const errSpan = document.createElement('span');
+            errSpan.className = 'field-error-hint fe-error-hint';
+            errSpan.style.display = 'block';
+            errSpan.textContent = 'Passwords do not match!';
+            confirmPassword.parentElement.appendChild(errSpan);
+            hasError = true;
         }
         
-        const hasUpper = /[A-Z]/.test(password);
-        const hasLower = /[a-z]/.test(password);
-        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const hasUpper = /[A-Z]/.test(password.value);
+        const hasLower = /[a-z]/.test(password.value);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password.value);
         
         if (!hasUpper || !hasLower || !hasSpecial) {
             e.preventDefault();
-            alert('Password must contain uppercase, lowercase, and special characters!');
-            return;
+            const errSpan = document.createElement('span');
+            errSpan.className = 'field-error-hint fe-error-hint';
+            errSpan.style.display = 'block';
+            errSpan.textContent = 'Password must contain uppercase, lowercase, and special characters!';
+            password.parentElement.appendChild(errSpan);
+            hasError = true;
+        }
+        
+        if (hasError) {
+            this.classList.add('was-validated');
         }
     });
 </script>

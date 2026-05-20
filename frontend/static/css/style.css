@@ -30,7 +30,9 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     line-height: 1.6;
     color: var(--text-dark);
-    background-color: var(--bg-light);
+    background: 
+        linear-gradient(rgba(248, 250, 252, 0.82), rgba(248, 250, 252, 0.82)),
+        url('../images/abstract_bg.jpg') center/cover no-repeat fixed;
     padding-top: 72px; /* offset for fixed glass navbar */
 }
 
@@ -1423,5 +1425,161 @@ body.menu-open {
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+    }
+}
+
+/* ============================================================================
+   FLOATING TOAST NOTIFICATIONS
+   ============================================================================ */
+
+.flash-toast-container {
+    position: fixed;
+    top: 90px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+    max-width: 420px;
+    width: calc(100% - 48px);
+}
+
+.alert {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.96);
+    border-left: 5px solid var(--primary-blue);
+    border-radius: 12px;
+    padding: 16px 44px 16px 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    position: relative;
+    animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.alert-success {
+    border-left-color: var(--success-green);
+}
+
+.alert-error, .alert-danger {
+    border-left-color: var(--danger-red);
+}
+
+.alert-warning {
+    border-left-color: #f59e0b;
+}
+
+.alert-info {
+    border-left-color: var(--primary-blue);
+}
+
+.alert.closing {
+    animation: slideOutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.alert-close {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-gray);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.alert-close:hover {
+    color: var(--text-dark);
+    transform: translateY(-50%) scale(1.15);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+/* ============================================================================
+   REAL-TIME VALIDATION FEEDBACK SYSTEM
+   ============================================================================ */
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper .validation-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 15;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: none;
+    opacity: 0;
+}
+
+.input-wrapper .validation-icon.valid {
+    display: block;
+    opacity: 1;
+    color: var(--success-green) !important;
+    animation: popIn 0.3s ease forwards;
+}
+
+.input-wrapper .validation-icon.invalid {
+    display: block;
+    opacity: 1;
+    color: var(--danger-red) !important;
+    animation: popIn 0.3s ease forwards;
+}
+
+@keyframes popIn {
+    0% {
+        transform: translateY(-50%) scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: translateY(-50%) scale(1.2);
+    }
+    100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
     }
 }

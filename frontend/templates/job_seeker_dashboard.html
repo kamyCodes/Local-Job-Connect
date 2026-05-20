@@ -129,13 +129,21 @@
                 {% endif %}
             </div>
 
-            <div style="background: linear-gradient(135deg, #3b82f6, #1e3a8a); padding: 24px; border-radius: 16px; color: white;">
-                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-lightbulb"></i> Quick Tip
-                </h3>
-                <p style="font-size: 14px; line-height: 1.6; opacity: 0.95;">
-                    Complete your profile and upload multiple versions of your resume tailored to different job types to increase your chances!
-                </p>
+            <div style="background: linear-gradient(135deg, #3b82f6, #1e3a8a); padding: 24px; border-radius: 16px; color: white; position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 0;">
+                        <i class="fas fa-lightbulb" style="color: #f59e0b;"></i> Quick Tip
+                    </h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="prevTipBtn" style="background: rgba(255,255,255,0.15); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chevron-left" style="font-size: 12px;"></i></button>
+                        <button id="nextTipBtn" style="background: rgba(255,255,255,0.15); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chevron-right" style="font-size: 12px;"></i></button>
+                    </div>
+                </div>
+                <div style="min-height: 80px; display: flex; align-items: center;">
+                    <p id="quickTipText" style="font-size: 14px; line-height: 1.6; opacity: 0.95; margin: 0; transition: opacity 0.3s ease;">
+                        Complete your profile and upload multiple versions of your resume tailored to different job types to increase your chances!
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -143,4 +151,40 @@
 
 {% set now = namespace() %}
 {% set now.hour = 14 %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  /* ── Interactive Quick Tips ── */
+  const tips = [
+    "Complete your profile and upload multiple versions of your resume tailored to different job types to increase your chances!",
+    "Local employers prioritize candidates living nearby. Keep your address and city accurate to get matched faster.",
+    "Follow up on your applications! A polite, professional message to the employer can set you apart.",
+    "Check your applications regularly. Vetted employers in Nigeria use our chat system to schedule interviews.",
+    "Prepare for interviews by researching the business and showing your commitment to community growth."
+  ];
+  let currentTip = 0;
+  const tipText = document.getElementById('quickTipText');
+  const prevBtn = document.getElementById('prevTipBtn');
+  const nextBtn = document.getElementById('nextTipBtn');
+  
+  function updateTip(idx) {
+    if (!tipText) return;
+    tipText.style.opacity = 0;
+    setTimeout(() => {
+      currentTip = (idx + tips.length) % tips.length;
+      tipText.textContent = tips[currentTip];
+      tipText.style.opacity = 1;
+    }, 300);
+  }
+  
+  let tipTimer = setInterval(() => updateTip(currentTip + 1), 8000);
+  
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => { clearInterval(tipTimer); updateTip(currentTip - 1); tipTimer = setInterval(() => updateTip(currentTip + 1), 8000); });
+    nextBtn.addEventListener('click', () => { clearInterval(tipTimer); updateTip(currentTip + 1); tipTimer = setInterval(() => updateTip(currentTip + 1), 8000); });
+  }
+});
+</script>
+{% endblock %}
 {% endblock %}
