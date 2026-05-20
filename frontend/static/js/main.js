@@ -164,11 +164,45 @@ document.addEventListener('DOMContentLoaded', function() {
 		function validateField() {
 			const val = input.value.trim();
 			
+			// ── Custom Password validations inside real-time handler ──
+			if (input.id === 'password') {
+				const hasUpper = /[A-Z]/.test(val);
+				const hasLower = /[a-z]/.test(val);
+				const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
+				const hasMinLength = val.length >= 8;
+
+				if (val !== '' && (!hasUpper || !hasLower || !hasSpecial || !hasMinLength)) {
+					input.setCustomValidity('Password must be at least 8 characters long and contain uppercase, lowercase, and special characters.');
+				} else {
+					input.setCustomValidity('');
+				}
+
+				// Trigger confirm password check if it already has a value
+				const confirmInput = document.getElementById('confirm_password');
+				if (confirmInput && confirmInput.value !== '') {
+					const confirmEvent = new Event('input', { bubbles: true });
+					confirmInput.dispatchEvent(confirmEvent);
+				}
+			}
+
+			if (input.id === 'confirm_password') {
+				const passwordInput = document.getElementById('password');
+				if (passwordInput && val !== passwordInput.value) {
+					input.setCustomValidity('Passwords do not match!');
+				} else {
+					input.setCustomValidity('');
+				}
+			}
+
 			// If empty, hide icon and clear custom visual borders
 			if (val === '') {
 				icon.className = 'validation-icon';
 				input.style.borderColor = '';
 				input.style.boxShadow = '';
+				
+				// Hide dynamic helper errors if empty
+				const errSpan = group.querySelector('.fe-error-hint');
+				if (errSpan) errSpan.style.display = 'none';
 				return;
 			}
 
@@ -176,10 +210,25 @@ document.addEventListener('DOMContentLoaded', function() {
 				icon.className = 'validation-icon fas fa-check-circle valid';
 				input.style.borderColor = 'var(--success-green)';
 				input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.08)';
+				
+				// Hide any active error hint
+				const errSpan = group.querySelector('.fe-error-hint');
+				if (errSpan) errSpan.style.display = 'none';
 			} else {
 				icon.className = 'validation-icon fas fa-times-circle invalid';
 				input.style.borderColor = 'var(--danger-red)';
 				input.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.08)';
+				
+				// Dynamically display error hints under the field
+				let errSpan = group.querySelector('.fe-error-hint');
+				if (!errSpan) {
+					errSpan = document.createElement('span');
+					errSpan.className = 'field-error-hint fe-error-hint';
+					errSpan.style.display = 'block';
+					group.appendChild(errSpan);
+				}
+				errSpan.textContent = input.validationMessage || 'Please fill out this field correctly.';
+				errSpan.style.display = 'block';
 			}
 		}
 

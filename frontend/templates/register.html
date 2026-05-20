@@ -184,43 +184,6 @@
         });
     });
     
-    // Password validation
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-        // Clear any old dynamically added front-end errors
-        document.querySelectorAll('.fe-error-hint').forEach(el => el.remove());
-        
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm_password');
-        
-        let hasError = false;
-        
-        if (password.value !== confirmPassword.value) {
-            e.preventDefault();
-            const errSpan = document.createElement('span');
-            errSpan.className = 'field-error-hint fe-error-hint';
-            errSpan.style.display = 'block';
-            errSpan.textContent = 'Passwords do not match!';
-            confirmPassword.parentElement.appendChild(errSpan);
-            hasError = true;
-        }
-        
-        const hasUpper = /[A-Z]/.test(password.value);
-        const hasLower = /[a-z]/.test(password.value);
-        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password.value);
-        
-        if (!hasUpper || !hasLower || !hasSpecial) {
-            e.preventDefault();
-            const errSpan = document.createElement('span');
-            errSpan.className = 'field-error-hint fe-error-hint';
-            errSpan.style.display = 'block';
-            errSpan.textContent = 'Password must contain uppercase, lowercase, and special characters!';
-            password.parentElement.appendChild(errSpan);
-            hasError = true;
-        }
-        
-        if (hasError) {
-            this.classList.add('was-validated');
-        }
-    });
+    // Unified form validation logic is managed dynamically inside main.js
 </script>
 {% endblock %}
