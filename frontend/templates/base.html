@@ -12,8 +12,9 @@
     <!-- Theme Color for Mobile Browsers -->
     <meta name="theme-color" content="#1e3a8a">
     
-    <!-- Apple Touch Icon -->
+    <!-- Apple Touch Icon & Favicon -->
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
     
     <title>{% block title %}Local Job Connect{% endblock %}</title>
     
@@ -64,10 +65,7 @@
         <div class="container">
             <div class="nav-brand">
                 <a href="{{ url_for('main.index') }}">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="32" height="32" rx="8" fill="#1e3a8a"/>
-                        <path d="M16 8L8 14V24H12V20H20V24H24V14L16 8Z" fill="white"/>
-                    </svg>
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Local Job Connect Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;">
                     Local Job Connect
                 </a>
             </div>
