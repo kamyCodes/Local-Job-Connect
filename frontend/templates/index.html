@@ -1,148 +1,316 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Local Job Connect{% endblock %}
+{% block title %}Home - Local Job Connect Nigeria{% endblock %}
 
 {% block content %}
-<div class="hero" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #0ea5e9 100%); padding: 60px 0; min-height: 540px; display: flex; align-items: center; position: relative;">
-    <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center; width: 100%;">
-        <!-- Left Side: Hero content -->
-        <div class="hero-content" style="max-width: 100%; position: relative; z-index: 2;">
-            <h1 style="font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; color: white;">Connecting You to Jobs Within Your Community</h1>
-            <p class="hero-subtitle" style="font-size: 18px; opacity: 0.95; line-height: 1.6; margin-bottom: 32px; color: white;">Find local opportunities fast. Build stronger local economies. Reduce commute time and strengthen your neighborhood.</p>
-            
-            {% if not current_user.is_authenticated %}
-            <div class="hero-cta" style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-large">
-                    <i class="fas fa-rocket"></i> Get Started
-                </a>
-                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-large">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
-            </div>
-            {% endif %}
-        </div>
-        
-        <!-- Right Side: Beautiful Carousel -->
-        <div class="hero-carousel-card" style="position: relative; width: 100%; height: 420px; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-xl); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); z-index: 2;">
-            <div class="carousel-container" style="width: 100%; height: 100%; position: relative;">
-                <div class="carousel-slide active" style="position: absolute; width: 100%; height: 100%; opacity: 1; transition: opacity 0.8s ease;">
-                    <img src="{{ url_for('static', filename='images/carousel_employees.jpg') }}" alt="Local Collaboration" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;">
-                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 24px 20px; color: white;">
-                        <h4 style="margin: 0; font-size: 18px; font-weight: 700;">Vibrant Community</h4>
-                        <p style="margin: 6px 0 0; font-size: 13px; opacity: 0.9; line-height: 1.4;">Work with top local businesses close to home.</p>
-                    </div>
-                </div>
-                <div class="carousel-slide" style="position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease;">
-                    <img src="{{ url_for('static', filename='images/carousel_seeker.jpg') }}" alt="Job Seeker Opportunities" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;">
-                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 24px 20px; color: white;">
-                        <h4 style="margin: 0; font-size: 18px; font-weight: 700;">Find Your Next Role</h4>
-                        <p style="margin: 6px 0 0; font-size: 13px; opacity: 0.9; line-height: 1.4;">Dozens of high-quality local listings updated daily.</p>
-                    </div>
-                </div>
-                <div class="carousel-slide" style="position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease;">
-                    <img src="{{ url_for('static', filename='images/carousel_employer.jpg') }}" alt="Employer Matching" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;">
-                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 24px 20px; color: white;">
-                        <h4 style="margin: 0; font-size: 18px; font-weight: 700;">Empower Local Business</h4>
-                        <p style="margin: 6px 0 0; font-size: 13px; opacity: 0.9; line-height: 1.4;">Find reliable, vetted local talent right in your area.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Indicators -->
-            <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 6px; z-index: 10;">
-                <span class="carousel-dot active" style="width: 8px; height: 8px; border-radius: 50%; background: white; opacity: 1; transition: opacity 0.3s; cursor: pointer;"></span>
-                <span class="carousel-dot" style="width: 8px; height: 8px; border-radius: 50%; background: white; opacity: 0.5; transition: opacity 0.3s; cursor: pointer;"></span>
-                <span class="carousel-dot" style="width: 8px; height: 8px; border-radius: 50%; background: white; opacity: 0.5; transition: opacity 0.3s; cursor: pointer;"></span>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container" style="padding: 80px 0;">
-    <div style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
-        <h2 style="font-size: 36px; font-weight: 700; margin-bottom: 16px;">How It Works</h2>
-        <p style="font-size: 18px; color: var(--text-gray);">Discover the easiest way to connect with local talent and opportunities.</p>
+<!-- ═══════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════ -->
+<div class="hero" style="background: linear-gradient(135deg, #0f2460 0%, #1e3a8a 45%, #3b82f6 100%); padding: 70px 0 80px; min-height: 580px; display: flex; align-items: center; position: relative; overflow: hidden;">
+
+  <!-- animated background blobs -->
+  <div style="position:absolute;top:-80px;right:-80px;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-60px;left:-60px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
+
+  <div class="container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px;align-items:center;width:100%;position:relative;z-index:2;">
+
+    <!-- Left: Hero copy -->
+    <div class="hero-content">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:100px;padding:6px 16px;margin-bottom:24px;color:white;font-size:13px;font-weight:600;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 1.5s infinite;"></span>
+        Live jobs across Nigeria
+      </div>
+      <h1 style="font-size:46px;font-weight:900;line-height:1.15;margin-bottom:20px;color:white;letter-spacing:-1px;">
+        Find Jobs<br><span style="color:#93c5fd;">Close to Home.</span>
+      </h1>
+      <p style="font-size:18px;opacity:0.92;line-height:1.7;margin-bottom:36px;color:white;max-width:480px;">
+        Nigeria's dedicated local job platform. Discover opportunities in your city, build your career, and strengthen your community — all in one place.
+      </p>
+
+      {% if not current_user.is_authenticated %}
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-large" style="font-size:16px;padding:14px 28px;background:white;color:#1e3a8a;border-radius:12px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+          <i class="fas fa-rocket"></i> Get Started Free
+        </a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-large" style="font-size:16px;padding:14px 28px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.4);border-radius:12px;font-weight:600;backdrop-filter:blur(8px);">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+      </div>
+      {% else %}
+      <a href="{{ url_for('seeker.search_jobs') if current_user.role == 'job_seeker' else url_for('employer.employer_dashboard') }}" class="btn btn-primary btn-large" style="font-size:16px;padding:14px 28px;background:white;color:#1e3a8a;border-radius:12px;font-weight:700;">
+        <i class="fas fa-arrow-right"></i> Go to Dashboard
+      </a>
+      {% endif %}
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-        <div style="text-align: center;">
-            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #3b82f6, #1e3a8a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: white; font-size: 32px;">
-                <i class="fas fa-search"></i>
-            </div>
-            <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Local Job Search</h3>
-            <p style="color: var(--text-gray); line-height: 1.6;">Easily search and filter for jobs available right in your neighborhood.</p>
+    <!-- Right: Carousel card -->
+    <div class="hero-carousel-card" style="position:relative;width:100%;height:440px;border-radius:24px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
+      <div class="carousel-container" style="width:100%;height:100%;position:relative;">
+        <div class="carousel-slide active" style="position:absolute;width:100%;height:100%;opacity:1;transition:opacity 0.9s ease;">
+          <img src="{{ url_for('static', filename='images/carousel_employees.jpg') }}" alt="Local Collaboration" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
+            <h4 style="margin:0;font-size:20px;font-weight:800;">Vibrant Communities</h4>
+            <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Work with top local businesses across Nigeria.</p>
+          </div>
         </div>
-        
-        <div style="text-align: center;">
-            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: white; font-size: 32px;">
-                <i class="fas fa-users"></i>
-            </div>
-            <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">For Job Seekers & Employers</h3>
-            <p style="color: var(--text-gray); line-height: 1.6;">A dedicated platform for both individuals seeking work and companies looking to hire.</p>
+        <div class="carousel-slide" style="position:absolute;width:100%;height:100%;opacity:0;transition:opacity 0.9s ease;">
+          <img src="{{ url_for('static', filename='images/carousel_seeker.jpg') }}" alt="Job Seekers" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
+            <h4 style="margin:0;font-size:20px;font-weight:800;">Find Your Next Role</h4>
+            <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Hundreds of local listings updated daily.</p>
+          </div>
         </div>
-        
-        <div style="text-align: center;">
-            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: white; font-size: 32px;">
-                <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Location-based Matching</h3>
-            <p style="color: var(--text-gray); line-height: 1.6;">Our smart algorithm connects you with the most relevant opportunities based on your location.</p>
+        <div class="carousel-slide" style="position:absolute;width:100%;height:100%;opacity:0;transition:opacity 0.9s ease;">
+          <img src="{{ url_for('static', filename='images/carousel_employer.jpg') }}" alt="Employers" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
+            <h4 style="margin:0;font-size:20px;font-weight:800;">Empower Local Business</h4>
+            <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Find reliable, vetted local talent in your area.</p>
+          </div>
         </div>
+      </div>
+      <div style="position:absolute;bottom:20px;right:20px;display:flex;gap:7px;z-index:10;">
+        <span class="carousel-dot active" style="width:10px;height:10px;border-radius:50%;background:white;opacity:1;transition:opacity 0.3s;cursor:pointer;"></span>
+        <span class="carousel-dot" style="width:10px;height:10px;border-radius:50%;background:white;opacity:0.45;transition:opacity 0.3s;cursor:pointer;"></span>
+        <span class="carousel-dot" style="width:10px;height:10px;border-radius:50%;background:white;opacity:0.45;transition:opacity 0.3s;cursor:pointer;"></span>
+      </div>
     </div>
+  </div>
 </div>
 
-<div style="background: var(--bg-white); padding: 80px 0; margin-top: 40px;">
-    <div class="container" style="text-align: center;">
-        <h2 style="font-size: 36px; font-weight: 700; margin-bottom: 20px;">Ready to Get Started?</h2>
-        <p style="font-size: 18px; color: var(--text-gray); margin-bottom: 40px;">Whether you're looking for work or hiring local talent, we've got you covered</p>
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-            <a href="{{ url_for('auth.register') }}?role=job_seeker" class="btn btn-primary btn-large">
-                <i class="fas fa-user"></i> I'm Looking for a Job
-            </a>
-            <a href="{{ url_for('auth.register') }}?role=employer" class="btn btn-primary btn-large">
-                <i class="fas fa-building"></i> I'm Hiring
-            </a>
-        </div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ANIMATED STATS BAR
+═══════════════════════════════════════════════════════ -->
+<div style="background:white;border-bottom:1px solid #e2e8f0;padding:32px 0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;text-align:center;">
+      <div class="stat-card">
+        <div class="stat-number" data-target="1200" style="font-size:36px;font-weight:900;color:#1e3a8a;line-height:1;">0</div>
+        <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Active Jobs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" data-target="8400" style="font-size:36px;font-weight:900;color:#10b981;line-height:1;">0</div>
+        <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Job Seekers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" data-target="530" style="font-size:36px;font-weight:900;color:#f59e0b;line-height:1;">0</div>
+        <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Local Employers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" data-target="36" style="font-size:36px;font-weight:900;color:#8b5cf6;line-height:1;">0</div>
+        <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">States Covered</div>
+      </div>
     </div>
+  </div>
 </div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCROLLING JOB CATEGORIES MARQUEE
+═══════════════════════════════════════════════════════ -->
+<div style="background:#f8fafc;padding:24px 0;overflow:hidden;border-bottom:1px solid #e2e8f0;">
+  <div class="marquee-track" style="display:flex;gap:16px;width:max-content;animation:marquee 28s linear infinite;">
+    {% set cats = ['🔧 Trades & Construction','🍽️ Food & Hospitality','📦 Logistics & Delivery','💻 Tech & IT','🏥 Healthcare','🎓 Education & Tutoring','🛒 Retail & Sales','🧹 Cleaning & Facilities','🚗 Transport & Driving','💼 Admin & Office','🎨 Creative & Design','🔐 Security','💰 Finance & Accounting','📣 Marketing','🏗️ Engineering'] %}
+    {% for cat in cats %}
+    <span style="white-space:nowrap;background:white;border:1px solid #e2e8f0;border-radius:100px;padding:8px 20px;font-size:14px;font-weight:600;color:#374151;box-shadow:0 1px 4px rgba(0,0,0,0.06);">{{ cat }}</span>
+    {% endfor %}
+    {# duplicate for seamless loop #}
+    {% for cat in cats %}
+    <span style="white-space:nowrap;background:white;border:1px solid #e2e8f0;border-radius:100px;padding:8px 20px;font-size:14px;font-weight:600;color:#374151;box-shadow:0 1px 4px rgba(0,0,0,0.06);">{{ cat }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════════════════ -->
+<div class="container" style="padding:90px 24px;">
+  <div style="text-align:center;max-width:700px;margin:0 auto 60px;">
+    <p style="font-size:13px;font-weight:700;letter-spacing:2px;color:#3b82f6;text-transform:uppercase;margin-bottom:12px;">Simple Process</p>
+    <h2 style="font-size:38px;font-weight:800;margin-bottom:16px;color:#1e293b;letter-spacing:-0.5px;">How It Works</h2>
+    <p style="font-size:18px;color:#64748b;line-height:1.7;">Three easy steps to connect you with your next local opportunity.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;">
+    <div class="feature-card" style="background:white;border-radius:20px;padding:36px 28px;box-shadow:0 4px 20px rgba(0,0,0,0.07);border:1px solid #f1f5f9;transition:transform 0.25s,box-shadow 0.25s;cursor:default;">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#3b82f6,#1e3a8a);border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:28px;">
+        <i class="fas fa-user-plus" style="color:white;"></i>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#3b82f6;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Step 01</div>
+      <h3 style="font-size:22px;font-weight:700;margin-bottom:12px;color:#1e293b;">Create Your Profile</h3>
+      <p style="color:#64748b;line-height:1.7;">Sign up in under 2 minutes. Tell us your skills, location, and what you're looking for.</p>
+    </div>
+
+    <div class="feature-card" style="background:white;border-radius:20px;padding:36px 28px;box-shadow:0 4px 20px rgba(0,0,0,0.07);border:1px solid #f1f5f9;transition:transform 0.25s,box-shadow 0.25s;cursor:default;">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#10b981,#059669);border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:28px;">
+        <i class="fas fa-map-marker-alt" style="color:white;"></i>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#10b981;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Step 02</div>
+      <h3 style="font-size:22px;font-weight:700;margin-bottom:12px;color:#1e293b;">Discover Local Jobs</h3>
+      <p style="color:#64748b;line-height:1.7;">Browse hundreds of opportunities near you — filtered by distance, salary, and category.</p>
+    </div>
+
+    <div class="feature-card" style="background:white;border-radius:20px;padding:36px 28px;box-shadow:0 4px 20px rgba(0,0,0,0.07);border:1px solid #f1f5f9;transition:transform 0.25s,box-shadow 0.25s;cursor:default;">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:28px;">
+        <i class="fas fa-handshake" style="color:white;"></i>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Step 03</div>
+      <h3 style="font-size:22px;font-weight:700;margin-bottom:12px;color:#1e293b;">Apply & Get Hired</h3>
+      <p style="color:#64748b;line-height:1.7;">Submit your application in one click and get notified when employers respond.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     WHY US — HIGHLIGHT STRIP
+═══════════════════════════════════════════════════════ -->
+<div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);padding:80px 0;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:52px;">
+      <h2 style="font-size:36px;font-weight:800;color:white;letter-spacing:-0.5px;">Why Local Job Connect?</h2>
+      <p style="color:rgba(255,255,255,0.8);font-size:17px;margin-top:12px;">Built specifically for Nigeria's local job market</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;">
+      {% set perks = [
+        ('fa-bolt','Fast Matching','Get matched to nearby jobs in seconds based on your location.'),
+        ('fa-shield-alt','Verified Employers','All employer accounts are reviewed before posting jobs.'),
+        ('fa-mobile-alt','Mobile Friendly','Apply from your phone, anywhere in Nigeria.'),
+        ('fa-naira-sign','No Hidden Fees','Completely free for job seekers. Always.')
+      ] %}
+      {% for icon, title, desc in perks %}
+      <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:28px 22px;backdrop-filter:blur(8px);transition:background 0.2s;" class="perk-card">
+        <i class="fas {{ icon }}" style="font-size:28px;color:#93c5fd;margin-bottom:16px;display:block;"></i>
+        <h4 style="font-size:18px;font-weight:700;color:white;margin-bottom:8px;">{{ title }}</h4>
+        <p style="font-size:14px;color:rgba(255,255,255,0.78);line-height:1.6;">{{ desc }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════════════════ -->
+<div class="container" style="padding:90px 24px;">
+  <div style="text-align:center;margin-bottom:52px;">
+    <p style="font-size:13px;font-weight:700;letter-spacing:2px;color:#3b82f6;text-transform:uppercase;margin-bottom:12px;">Real Stories</p>
+    <h2 style="font-size:36px;font-weight:800;color:#1e293b;letter-spacing:-0.5px;">What Our Users Say</h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;">
+    {% set testimonials = [
+      ('Chioma A.','Lagos','job_seeker','I found a marketing role 3 streets away from my house within a week of signing up. No more 2-hour commutes!'),
+      ('Emeka O.','Abuja','employer','We hired 4 reliable local staff through this platform. The quality of applicants from our area exceeded our expectations.'),
+      ('Fatima B.','Kano','job_seeker','As a fresh graduate I was struggling. This platform showed me dozens of entry-level roles in Kano I never knew existed.')
+    ] %}
+    {% for name, city, role, quote in testimonials %}
+    <div style="background:white;border-radius:20px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.07);border:1px solid #f1f5f9;position:relative;">
+      <div style="font-size:40px;color:#e2e8f0;font-family:Georgia,serif;line-height:1;margin-bottom:16px;">"</div>
+      <p style="color:#374151;line-height:1.75;font-size:15px;margin-bottom:24px;">{{ quote }}</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e3a8a);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;">{{ name[0] }}</div>
+        <div>
+          <div style="font-weight:700;color:#1e293b;font-size:15px;">{{ name }}</div>
+          <div style="font-size:13px;color:#64748b;">{{ city }} · {{ 'Job Seeker' if role == 'job_seeker' else 'Employer' }}</div>
+        </div>
+      </div>
+      <div style="position:absolute;top:24px;right:24px;display:flex;gap:3px;">
+        {% for _ in range(5) %}<i class="fas fa-star" style="color:#f59e0b;font-size:12px;"></i>{% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     DUAL CTA
+═══════════════════════════════════════════════════════ -->
+<div style="background:#f8fafc;padding:80px 0;border-top:1px solid #e2e8f0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+
+      <!-- Job Seeker CTA -->
+      <div style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);border-radius:24px;padding:48px 36px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.08);pointer-events:none;"></div>
+        <i class="fas fa-user-tie" style="font-size:48px;color:rgba(255,255,255,0.9);margin-bottom:24px;display:block;"></i>
+        <h3 style="font-size:26px;font-weight:800;color:white;margin-bottom:14px;">I'm Looking for Work</h3>
+        <p style="color:rgba(255,255,255,0.85);line-height:1.7;margin-bottom:32px;font-size:15px;">Browse hundreds of jobs near you. Apply in seconds. No experience required to sign up.</p>
+        <a href="{{ url_for('auth.register') }}" style="display:inline-flex;align-items:center;gap:10px;background:white;color:#1e3a8a;padding:14px 28px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.15);transition:transform 0.2s;" class="cta-btn">
+          <i class="fas fa-search"></i> Find Jobs Now
+        </a>
+      </div>
+
+      <!-- Employer CTA -->
+      <div style="background:linear-gradient(135deg,#065f46,#10b981);border-radius:24px;padding:48px 36px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.08);pointer-events:none;"></div>
+        <i class="fas fa-building" style="font-size:48px;color:rgba(255,255,255,0.9);margin-bottom:24px;display:block;"></i>
+        <h3 style="font-size:26px;font-weight:800;color:white;margin-bottom:14px;">I'm Hiring</h3>
+        <p style="color:rgba(255,255,255,0.85);line-height:1.7;margin-bottom:32px;font-size:15px;">Post a job listing in minutes and reach qualified local talent in your area today.</p>
+        <a href="{{ url_for('auth.register') }}" style="display:inline-flex;align-items:center;gap:10px;background:white;color:#065f46;padding:14px 28px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.15);transition:transform 0.2s;" class="cta-btn">
+          <i class="fas fa-plus-circle"></i> Post a Job
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% block extra_js %}
+<style>
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.4)} }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  .feature-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,0.13) !important; }
+  .perk-card:hover { background:rgba(255,255,255,0.18) !important; }
+  .cta-btn:hover { transform:translateY(-2px); }
+</style>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const slides = document.querySelectorAll('.carousel-slide');
-        const dots = document.querySelectorAll('.carousel-dot');
-        let currentSlide = 0;
-        let slideInterval;
-        
-        function showSlide(index) {
-            slides[currentSlide].style.opacity = 0;
-            slides[currentSlide].classList.remove('active');
-            dots[currentSlide].style.opacity = 0.5;
-            dots[currentSlide].classList.remove('active');
-            
-            currentSlide = (index + slides.length) % slides.length;
-            
-            slides[currentSlide].style.opacity = 1;
-            slides[currentSlide].classList.add('active');
-            dots[currentSlide].style.opacity = 1;
-            dots[currentSlide].classList.add('active');
-        }
-        
-        function startInterval() {
-            slideInterval = setInterval(function() {
-                showSlide(currentSlide + 1);
-            }, 5000);
-        }
-        
-        // Dot clicks
-        dots.forEach((dot, idx) => {
-            dot.addEventListener('click', () => {
-                clearInterval(slideInterval);
-                showSlide(idx);
-                startInterval();
-            });
-        });
-        
-        startInterval();
-    });
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── Carousel ── */
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots   = document.querySelectorAll('.carousel-dot');
+  let current = 0, timer;
+
+  function showSlide(idx) {
+    slides[current].style.opacity = 0;
+    slides[current].classList.remove('active');
+    dots[current].style.opacity = 0.45;
+    current = (idx + slides.length) % slides.length;
+    slides[current].style.opacity = 1;
+    slides[current].classList.add('active');
+    dots[current].style.opacity = 1;
+  }
+  function startCarousel() { timer = setInterval(() => showSlide(current + 1), 5000); }
+  dots.forEach((d, i) => d.addEventListener('click', () => { clearInterval(timer); showSlide(i); startCarousel(); }));
+  startCarousel();
+
+  /* ── Animated stat counters ── */
+  function animateCount(el) {
+    const target = parseInt(el.dataset.target, 10);
+    const duration = 1800;
+    const step = Math.ceil(target / (duration / 16));
+    let val = 0;
+    const tick = setInterval(() => {
+      val = Math.min(val + step, target);
+      el.textContent = val.toLocaleString();
+      if (val >= target) clearInterval(tick);
+    }, 16);
+  }
+
+  const statEls = document.querySelectorAll('.stat-number');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); observer.unobserve(e.target); } });
+  }, { threshold: 0.4 });
+  statEls.forEach(el => observer.observe(el));
+
+});
 </script>
 {% endblock %}
 {% endblock %}

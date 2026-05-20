@@ -751,6 +751,42 @@ body {
     font-weight: 600;
 }
 
+/* ── Required field validation: only fires after a submit attempt ── */
+.was-validated .form-group input:invalid,
+.was-validated .form-group textarea:invalid,
+.was-validated .form-group select:invalid {
+    border-color: var(--danger-red);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    animation: shake 0.35s ease;
+}
+
+.was-validated .form-group input:valid,
+.was-validated .form-group textarea:valid,
+.was-validated .form-group select:valid {
+    border-color: var(--success-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.10);
+}
+
+/* Tiny helper label shown under an invalid field */
+.field-error-hint {
+    display: none;
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger-red);
+}
+.was-validated .form-group input:invalid ~ .field-error-hint {
+    display: block;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+}
+
 /* ============================================================================
    MAP VIEW - Modern Map Container
    ============================================================================ */

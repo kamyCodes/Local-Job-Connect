@@ -121,6 +121,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			}, 5000);
 		}
 	});
+
+	// ── Required-field red border on failed submit ──────────────────────────
+	document.querySelectorAll('form').forEach(function(form) {
+		form.addEventListener('submit', function(e) {
+			if (!form.checkValidity()) {
+				e.preventDefault();
+				form.classList.add('was-validated');
+			}
+		});
+	});
 });
 
 // Page transition: intercept internal link clicks and play exit animation
