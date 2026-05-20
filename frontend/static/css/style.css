@@ -180,6 +180,13 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* Navbar Sign Up button — always white text regardless of glass overlay */
+.nav-links a.btn-primary,
+.nav-links a.btn-primary:hover {
+    color: #ffffff !important;
+    text-shadow: none;
+}
+
 .btn-secondary {
     background: var(--bg-light);
     color: var(--text-dark);
