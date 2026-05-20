@@ -161,3 +161,20 @@ document.addEventListener('DOMContentLoaded', function() {
 		setTimeout(onAnimEnd, 350);
 	});
 });
+
+// ── Glass Navbar: solidify on scroll ──────────────────────────────────────────
+(function () {
+	var navbar = document.querySelector('.navbar');
+	if (!navbar) return;
+
+	function handleScroll() {
+		if (window.scrollY > 10) {
+			navbar.classList.add('scrolled');
+		} else {
+			navbar.classList.remove('scrolled');
+		}
+	}
+
+	window.addEventListener('scroll', handleScroll, { passive: true });
+	handleScroll(); // run once on load in case page is already scrolled
+})();

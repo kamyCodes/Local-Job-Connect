@@ -31,6 +31,7 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     background-color: var(--bg-light);
+    padding-top: 72px; /* offset for fixed glass navbar */
 }
 
 .container {
@@ -43,14 +44,38 @@ body {
    NAVIGATION - Modern Header
    ============================================================================ */
 
+/* ---- Glass Navbar ---- */
 .navbar {
-    background: var(--bg-white);
-    box-shadow: var(--shadow-sm);
-    padding: 16px 0;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
-    border-bottom: 1px solid var(--border-light);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 14px 0;
+
+    /* Glassmorphism core */
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+
+    /* Subtle mirror border */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+
+    /* Soft glow shadow */
+    box-shadow:
+        0 4px 24px rgba(30, 58, 138, 0.10),
+        0 1px 0 rgba(255, 255, 255, 0.5) inset;
+
+    /* Smooth fade-in on page load */
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Slightly more opaque when scrolled (JS adds .scrolled class) */
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow:
+        0 8px 32px rgba(30, 58, 138, 0.13),
+        0 1px 0 rgba(255, 255, 255, 0.6) inset;
 }
 
 .navbar .container {
@@ -73,16 +98,19 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    letter-spacing: -0.3px;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.6);
 }
 
 .nav-brand svg {
     width: 32px;
     height: 32px;
+    filter: drop-shadow(0 2px 4px rgba(30,58,138,0.18));
 }
 
 .nav-links {
     display: flex;
-    gap: 32px;
+    gap: 28px;
     align-items: center;
 }
 
@@ -91,24 +119,35 @@ body {
     text-decoration: none;
     font-weight: 500;
     font-size: 15px;
-    transition: color 0.2s;
+    transition: color 0.2s, text-shadow 0.2s;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
 }
 
 .nav-links a:hover {
     color: var(--primary-light);
+    text-shadow: 0 0 12px rgba(59,130,246,0.35);
 }
 
 .user-profile {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-blue));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 15px;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+    border: 2px solid rgba(255,255,255,0.55);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-profile:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgba(30,58,138,0.35);
 }
 
 /* ============================================================================
