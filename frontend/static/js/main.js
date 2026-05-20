@@ -193,44 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
-// Page transition: intercept internal link clicks and play exit animation
-document.addEventListener('DOMContentLoaded', function() {
-	const main = document.querySelector('.main-content');
-	if (!main) return;
-
-	document.addEventListener('click', function(e){
-		const a = e.target.closest('a');
-		if (!a) return;
-		// skip external links, anchors, mailto/tel, or links with target/_blank
-		const href = a.getAttribute('href');
-		if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-		if (a.target && a.target !== '' && a.target !== '_self') return;
-		// same origin check
-		try {
-			const url = new URL(href, window.location.href);
-			if (url.origin !== window.location.origin) return;
-		} catch (err){
-			return; // malformed URL
-		}
-
-		// allow opt-out using data-no-transition
-		if (a.hasAttribute('data-no-transition')) return;
-
-		// only intercept left-clicks without modifier keys
-		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-
-		e.preventDefault();
-		main.classList.add('page-exit');
-
-		// after the animation ends, navigate
-		const onAnimEnd = function(){
-			window.location.href = a.href;
-		};
-
-		// fallback in case animationend doesn't fire
-		setTimeout(onAnimEnd, 350);
-	});
-});
+// ── Clean and Fast Navigation ───────────────────────────────────────────────
 
 // ── Glass Navbar: solidify on scroll ──────────────────────────────────────────
 (function () {
