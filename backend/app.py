@@ -26,6 +26,14 @@ def create_app():
         database_url = None
     elif database_url and database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        
+    # Append sslmode=require directly to the connection DSN string if not already present
+    if database_url and database_url.startswith('postgresql'):
+        if '?' not in database_url:
+            database_url += '?sslmode=require'
+        elif 'sslmode=' not in database_url:
+            database_url += '&sslmode=require'
+            
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///local_job_connect.db'
     
     # Configure robust connection arguments, SSL mode, and pre-ping parameters for PostgreSQL
