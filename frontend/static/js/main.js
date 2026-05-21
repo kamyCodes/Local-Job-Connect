@@ -1118,11 +1118,23 @@ document.addEventListener('DOMContentLoaded', function () {
 				marker.openPopup();
 			});
 
-			card.addEventListener('click', () => {
+			card.addEventListener('click', (e) => {
+				// Prevent triggering if they clicked a button inside the card
+				if (e.target.closest('button') || e.target.closest('a')) return;
 				map.setView(latLng, 13);
 				marker.openPopup();
 				card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 			});
+
+			const viewMapBtn = card.querySelector('.view-on-map-btn');
+			if (viewMapBtn) {
+				viewMapBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					map.setView(latLng, 13);
+					marker.openPopup();
+					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				});
+			}
 		});
 
 		// Try to fetch geocoded endpoint to get Seeker's own home location and plot a pulsing marker

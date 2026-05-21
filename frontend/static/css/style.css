@@ -1943,7 +1943,34 @@ body.menu-open {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 400px;
+    min-height: 200px;
+    max-height: calc(100vh - 290px);
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+/* Premium Scrollbar Customizations */
+.kanban-board::-webkit-scrollbar,
+.kanban-cards-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.kanban-board::-webkit-scrollbar-track,
+.kanban-cards-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 8px;
+}
+
+.kanban-board::-webkit-scrollbar-thumb,
+.kanban-cards-container::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 8px;
+}
+
+.kanban-board::-webkit-scrollbar-thumb:hover,
+.kanban-cards-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-gray);
 }
 
 .kanban-card {
