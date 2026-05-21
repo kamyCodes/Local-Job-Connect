@@ -10,20 +10,33 @@
             <div class="stat-card">
                 <div class="stat-number">{{ applications|length }}</div>
                 <div class="stat-label">Applications Sent</div>
+                {% if recent_apps_count > 0 %}
                 <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i> +2 this week
+                    <i class="fas fa-arrow-up"></i> +{{ recent_apps_count }} this week
                 </div>
+                {% else %}
+                <div style="color: var(--text-gray); font-weight: 500; font-size: 13px; margin-top: 8px;">
+                    No new applications this week
+                </div>
+                {% endif %}
             </div>
             <div class="stat-card">
                 <div class="stat-number">{{ saved_jobs|length }}</div>
                 <div class="stat-label">Saved Jobs</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ applications|selectattr('status', 'equalto', 'interview')|list|length }}</div>
+                {% set interview_count = applications|selectattr('status', 'equalto', 'interview')|list|length %}
+                <div class="stat-number">{{ interview_count }}</div>
                 <div class="stat-label">Interviews</div>
+                {% if interview_count > 0 %}
                 <div class="stat-change positive">
                     <i class="fas fa-calendar-check"></i> Scheduled
                 </div>
+                {% else %}
+                <div style="color: var(--text-gray); font-weight: 500; font-size: 13px; margin-top: 8px;">
+                    No interviews scheduled
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -149,8 +162,6 @@
     </div>
 </div>
 
-{% set now = namespace() %}
-{% set now.hour = 14 %}
 
 {% block extra_js %}
 <script>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import User
+from models import User, JobPosting
 from extensions import db
 from utils import geocode_address
 
@@ -8,7 +8,20 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    return render_template('index.html')
+    # Calculate real, dynamic database stats for the landing page
+    active_jobs = JobPosting.query.filter_by(status='active').count()
+    job_seekers = User.query.filter_by(role='job_seeker').count()
+    local_employers = User.query.filter_by(role='employer').count()
+    
+    # Calculate unique cities registered across all users (seekers and employers)
+    unique_cities = db.session.query(User.city).distinct().count()
+    cities_covered = max(1, unique_cities) if unique_cities else 1
+    
+    return render_template('index.html',
+                           active_jobs=active_jobs,
+                           job_seekers=job_seekers,
+                           local_employers=local_employers,
+                           cities_covered=cities_covered)
 
 @main_bp.route('/profile')
 @login_required

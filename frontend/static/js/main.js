@@ -112,12 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 		}
 
-		// Auto-dismiss all floating alerts after exactly 3.09s (3090ms)
+		// Auto-dismiss all floating alerts after exactly 5s (5000ms)
 		setTimeout(()=>{
 			if (!document.body.contains(alert)) return;
 			alert.classList.add('closing');
 			setTimeout(()=>alert.remove(), 300);
-		}, 3090);
+		}, 5000);
 	});
 
 	// ── Required-field red border on failed submit ──────────────────────────

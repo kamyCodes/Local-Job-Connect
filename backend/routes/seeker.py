@@ -20,7 +20,17 @@ def job_seeker_dashboard():
     applications = Application.query.filter_by(applicant_id=current_user.id).order_by(Application.submitted_at.desc()).all()
     saved_jobs = SavedJob.query.filter_by(user_id=current_user.id).order_by(SavedJob.saved_at.desc()).all()
     now = datetime.now()
-    return render_template('job_seeker_dashboard.html', applications=applications, saved_jobs=saved_jobs, now=now)
+    
+    # Calculate applications submitted in the last 7 days
+    from datetime import timedelta
+    one_week_ago = datetime.utcnow() - timedelta(days=7)
+    recent_apps_count = sum(1 for app in applications if app.submitted_at >= one_week_ago)
+    
+    return render_template('job_seeker_dashboard.html', 
+                           applications=applications, 
+                           saved_jobs=saved_jobs, 
+                           now=now,
+                           recent_apps_count=recent_apps_count)
 
 @seeker_bp.route('/jobs/search')
 @login_required

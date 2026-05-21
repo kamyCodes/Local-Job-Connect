@@ -57,21 +57,21 @@
         <div class="hero-carousel-card" style="position:relative;width:100%;height:440px;border-radius:24px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
           <div class="carousel-container" style="width:100%;height:100%;position:relative;">
             <div class="carousel-slide active" style="position:absolute;width:100%;height:100%;opacity:1;transition:opacity 0.9s ease;">
-              <img src="{{ url_for('static', filename='images/carousel_employees.jpg') }}" alt="Local Collaboration" style="width:100%;height:100%;object-fit:cover;">
+              <img src="{{ url_for('static', filename='images/carousel_employees.jpg') }}" alt="Local Collaboration" width="560" height="440" style="width:100%;height:100%;object-fit:cover;" fetchpriority="high" decoding="async">
               <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
                 <h4 style="margin:0;font-size:20px;font-weight:800;">Vibrant Communities</h4>
                 <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Work with top local businesses across Nigeria.</p>
               </div>
             </div>
             <div class="carousel-slide" style="position:absolute;width:100%;height:100%;opacity:0;transition:opacity 0.9s ease;">
-              <img src="{{ url_for('static', filename='images/carousel_seeker.jpg') }}" alt="Job Seekers" style="width:100%;height:100%;object-fit:cover;">
+              <img src="{{ url_for('static', filename='images/carousel_seeker.jpg') }}" alt="Job Seekers" width="560" height="440" style="width:100%;height:100%;object-fit:cover;" loading="lazy" decoding="async">
               <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
                 <h4 style="margin:0;font-size:20px;font-weight:800;">Find Your Next Role</h4>
                 <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Hundreds of local listings updated daily.</p>
               </div>
             </div>
             <div class="carousel-slide" style="position:absolute;width:100%;height:100%;opacity:0;transition:opacity 0.9s ease;">
-              <img src="{{ url_for('static', filename='images/carousel_employer.jpg') }}" alt="Employers" style="width:100%;height:100%;object-fit:cover;">
+              <img src="{{ url_for('static', filename='images/carousel_employer.jpg') }}" alt="Employers" width="560" height="440" style="width:100%;height:100%;object-fit:cover;" loading="lazy" decoding="async">
               <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.88));padding:28px 24px;color:white;">
                 <h4 style="margin:0;font-size:20px;font-weight:800;">Empower Local Business</h4>
                 <p style="margin:8px 0 0;font-size:14px;opacity:0.9;line-height:1.5;">Find reliable, vetted local talent in your area.</p>
@@ -94,19 +94,19 @@
       <div class="container">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;text-align:center;">
           <div class="stat-card">
-            <div class="stat-number" data-target="1200" style="font-size:36px;font-weight:900;color:#1e3a8a;line-height:1;">0</div>
+            <div class="stat-number" data-target="{{ active_jobs }}" style="font-size:36px;font-weight:900;color:#1e3a8a;line-height:1;">0</div>
             <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Active Jobs</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" data-target="8400" style="font-size:36px;font-weight:900;color:#10b981;line-height:1;">0</div>
+            <div class="stat-number" data-target="{{ job_seekers }}" style="font-size:36px;font-weight:900;color:#10b981;line-height:1;">0</div>
             <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Job Seekers</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" data-target="530" style="font-size:36px;font-weight:900;color:#f59e0b;line-height:1;">0</div>
+            <div class="stat-number" data-target="{{ local_employers }}" style="font-size:36px;font-weight:900;color:#f59e0b;line-height:1;">0</div>
             <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">Local Employers</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number" data-target="36" style="font-size:36px;font-weight:900;color:#8b5cf6;line-height:1;">0</div>
+            <div class="stat-number" data-target="{{ cities_covered }}" style="font-size:36px;font-weight:900;color:#8b5cf6;line-height:1;">0</div>
             <div style="font-size:14px;color:#64748b;font-weight:600;margin-top:6px;">States Covered</div>
           </div>
         </div>

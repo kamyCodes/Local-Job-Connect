@@ -21,8 +21,21 @@ def employer_dashboard():
             'job': job,
             'application_count': application_count
         })
+        
+    # Calculate applications submitted in the last 7 days for all employer jobs
+    from datetime import timedelta
+    one_week_ago = datetime.utcnow() - timedelta(days=7)
+    recent_apps_count = 0
+    for item in jobs_with_counts:
+        recent_count = Application.query.filter(
+            Application.job_id == item['job'].id,
+            Application.submitted_at >= one_week_ago
+        ).count()
+        recent_apps_count += recent_count
     
-    return render_template('employer_dashboard.html', jobs_with_counts=jobs_with_counts)
+    return render_template('employer_dashboard.html', 
+                           jobs_with_counts=jobs_with_counts, 
+                           recent_apps_count=recent_apps_count)
 
 @employer_bp.route('/employer/jobs/create', methods=['GET', 'POST'])
 @login_required

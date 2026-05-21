@@ -19,18 +19,31 @@
                 <div class="stat-label">Total Job Posts</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ jobs_with_counts|selectattr('job.status', 'equalto', 'active')|list|length }}</div>
+                {% set active_count = jobs_with_counts|selectattr('job.status', 'equalto', 'active')|list|length %}
+                <div class="stat-number">{{ active_count }}</div>
                 <div class="stat-label">Active Positions</div>
+                {% if active_count > 0 %}
                 <div class="stat-change positive">
                     <i class="fas fa-check-circle"></i> Live
                 </div>
+                {% else %}
+                <div style="color: var(--text-gray); font-weight: 500; font-size: 13px; margin-top: 8px;">
+                    No active jobs
+                </div>
+                {% endif %}
             </div>
             <div class="stat-card">
                 <div class="stat-number">{{ jobs_with_counts|sum(attribute='application_count') }}</div>
                 <div class="stat-label">Applications</div>
+                {% if recent_apps_count > 0 %}
                 <div class="stat-change positive">
-                    <i class="fas fa-arrow-up"></i> +18%
+                    <i class="fas fa-arrow-up"></i> +{{ recent_apps_count }} this week
                 </div>
+                {% else %}
+                <div style="color: var(--text-gray); font-weight: 500; font-size: 13px; margin-top: 8px;">
+                    No new applications this week
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
