@@ -4,7 +4,7 @@ from datetime import datetime
 from collections import defaultdict
 from models import JobPosting, Application, Resume
 from extensions import db, cache
-from utils import role_required, is_within_service_area
+from utils import role_required, is_within_service_area, get_user_greeting
 
 employer_bp = Blueprint('employer', __name__)
 
@@ -32,10 +32,13 @@ def employer_dashboard():
             Application.submitted_at >= one_week_ago
         ).count()
         recent_apps_count += recent_count
+        
+    greeting = get_user_greeting(current_user)
     
     return render_template('employer_dashboard.html', 
                            jobs_with_counts=jobs_with_counts, 
-                           recent_apps_count=recent_apps_count)
+                           recent_apps_count=recent_apps_count,
+                           greeting=greeting)
 
 @employer_bp.route('/employer/jobs/create', methods=['GET', 'POST'])
 @login_required
@@ -71,6 +74,8 @@ def create_job():
             salary_max=float(salary_max) if salary_max else None,
             street_address=current_user.address,
             city=current_user.city,
+            state=current_user.state,
+            country=current_user.country,
             zip_code=current_user.zip_code,
             latitude=lat,
             longitude=lng

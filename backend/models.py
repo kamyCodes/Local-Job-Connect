@@ -17,7 +17,11 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20))
     address = db.Column(db.String(200))
     city = db.Column(db.String(100))
-    zip_code = db.Column(db.String(10), index=True)
+    state = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    zip_code = db.Column(db.Integer, index=True)
+    company_logo = db.Column(db.String(255))
+    logo_updated_at = db.Column(db.DateTime)
     
     # Geographic coordinates
     latitude = db.Column(db.Float)
@@ -64,7 +68,9 @@ class JobPosting(db.Model):
     # Location
     street_address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(100), nullable=False)
-    zip_code = db.Column(db.String(10), nullable=False, index=True)
+    state = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    zip_code = db.Column(db.Integer, nullable=False, index=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     

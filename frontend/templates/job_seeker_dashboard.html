@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container" style="padding: 40px 0;">
     <div class="dashboard-header">
-        <h1>Good {{ 'morning' if now.hour < 12 else 'afternoon' if now.hour < 18 else 'evening' }}, {{ current_user.full_name.split()[0] }}!</h1>
+        <h1>{{ greeting }}, {{ current_user.full_name.split()[0] }}!</h1>
         <p>Welcome back to your job search dashboard</p>
         
         <div class="dashboard-stats">
@@ -92,8 +92,12 @@
                     <div class="job-card">
                         <div class="job-header">
                             <div style="display: flex; gap: 16px; align-items: start; flex: 1;">
-                                <div class="job-company-logo">
-                                    {{ application.job.employer.company_name[0] }}
+                                <div class="job-company-logo" style="overflow: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; background: var(--bg-light); border: 1px solid var(--border-color);">
+                                    {% if application.job.employer.company_logo %}
+                                    <img src="{{ url_for('static', filename='uploads/logos/' + application.job.employer.company_logo) }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                    <span style="font-weight: bold; color: var(--primary-blue); font-size: 20px;">{{ application.job.employer.company_name[0] }}</span>
+                                    {% endif %}
                                 </div>
                                 <div style="flex: 1;">
                                     <h3 class="job-title">{{ application.job.title }}</h3>
@@ -141,6 +145,40 @@
                 <p style="color: var(--text-gray); text-align: center; padding: 20px;">No saved jobs yet</p>
                 {% endif %}
             </div>
+
+            <!-- Most Popular Active Job -->
+            {% if most_popular_job %}
+            <div style="background: var(--bg-white); padding: 24px; border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 24px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark);">
+                    <i class="fas fa-fire" style="color: #ef4444;"></i> Most Popular Job
+                </h3>
+                <div style="padding: 16px; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02); border-radius: 12px; transition: all 0.2s;">
+                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                        <div style="overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; min-width: 40px; background: var(--bg-light); border: 1px solid var(--border-color);">
+                            {% if most_popular_job.employer.company_logo %}
+                            <img src="{{ url_for('static', filename='uploads/logos/' + most_popular_job.employer.company_logo) }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fas fa-briefcase" style="color: var(--primary-blue);"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-dark);">
+                                <a href="{{ url_for('seeker.view_job', job_id=most_popular_job.id) }}" style="text-decoration: none; color: inherit; hover: underline;">
+                                    {{ most_popular_job.title }}
+                                </a>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-gray);">{{ most_popular_job.employer.company_name }}</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-gray); display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                        <i class="fas fa-map-marker-alt"></i> {{ most_popular_job.city }}, {{ most_popular_job.state or most_popular_job.country }}
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: #ef4444; display: inline-flex; align-items: center; gap: 4px; background: rgba(239, 68, 68, 0.1); padding: 4px 8px; border-radius: 6px;">
+                        <i class="fas fa-users"></i> {{ most_popular_job.application_count }} Applicants
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             <div style="background: linear-gradient(135deg, #3b82f6, #1e3a8a); padding: 24px; border-radius: 16px; color: white; position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">

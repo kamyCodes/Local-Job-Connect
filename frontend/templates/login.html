@@ -17,6 +17,45 @@
             display: none !important;
         }
     }
+    
+    @keyframes pulseBlink {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5);
+        }
+        50% {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 12px rgba(79, 70, 229, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+        }
+    }
+    @keyframes textPulse {
+        0% {
+            color: var(--primary-blue);
+            text-shadow: 0 0 0px rgba(79, 70, 229, 0);
+        }
+        50% {
+            color: #ff4757;
+            text-shadow: 0 0 6px rgba(255, 71, 87, 0.3);
+        }
+        100% {
+            color: var(--primary-blue);
+            text-shadow: 0 0 0px rgba(79, 70, 229, 0);
+        }
+    }
+    .blink-signup {
+        animation: pulseBlink 1.5s infinite ease-in-out;
+        border: 2px solid var(--primary-blue) !important;
+        background-color: var(--bg-white) !important;
+        color: var(--primary-blue) !important;
+    }
+    .blink-signup-link {
+        animation: textPulse 1.5s infinite ease-in-out;
+        font-weight: 700 !important;
+    }
 </style>
 
 <div class="container" style="max-width: 1100px; padding: 40px 24px;">
@@ -54,12 +93,12 @@
             
             <div style="text-align: center; margin: 20px 0; color: var(--text-gray); font-size: 14px; font-weight: 600;">OR</div>
             
-            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary btn-full btn-large">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary btn-full btn-large {% if email_not_found %}blink-signup{% endif %}">
                 <i class="fas fa-user-plus"></i> Create New Account
             </a>
             
             <p class="form-footer" style="margin-top: 24px; font-size: 14px;">
-                Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">Sign up here</a>
+                Don't have an account? <a href="{{ url_for('auth.register') }}" class="{% if email_not_found %}blink-signup-link{% endif %}" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">Sign up here</a>
             </p>
         </div>
     </div>

@@ -16,7 +16,7 @@
 
             <div class="form-group">
                 <label for="description"><i class="fas fa-align-left"></i> Job Description *</label>
-                <textarea id="description" name="description" rows="8" required>{{ job.description }}</textarea>
+                <textarea id="description" name="description" rows="8" required minlength="200" maxlength="12000">{{ job.description }}</textarea>
             </div>
 
             <div class="form-row">
@@ -25,10 +25,19 @@
                     <select id="category" name="category" required>
                         <option value="Technology" {{ 'selected' if job.category == 'Technology' }}>Technology</option>
                         <option value="Healthcare" {{ 'selected' if job.category == 'Healthcare' }}>Healthcare</option>
+                        <option value="Data-Science" {{ 'selected' if job.category == 'Data-Science' }}>Data Science</option>
+                        <option value="Artificial Intelligence" {{ 'selected' if job.category == 'Artificial Intelligence' }}>Artificial Intelligence</option>
                         <option value="Retail" {{ 'selected' if job.category == 'Retail' }}>Retail</option>
                         <option value="Education" {{ 'selected' if job.category == 'Education' }}>Education</option>
-                        <option value="Finance" {{ 'selected' if job.category == 'Finance' }}>Finance</option>
-                        <option value="Marketing" {{ 'selected' if job.category == 'Marketing' }}>Marketing</option>
+                        <option value="Fashion" {{ 'selected' if job.category == 'Fashion' }}>Fashion</option>
+                        <option value="Finance & Banking" {{ 'selected' if job.category == 'Finance & Banking' }}>Finance & Banking</option>
+                        <option value="Customer Service" {{ 'selected' if job.category == 'Customer Service' }}>Customer Service</option>
+                        <option value="Engineering" {{ 'selected' if job.category == 'Engineering' }}>Engineering</option>
+                        <option value="Construction & Trades" {{ 'selected' if job.category == 'Construction & Trades' }}>Construction & Trades</option>
+                        <option value="Hospitality & Tourism" {{ 'selected' if job.category == 'Hospitality & Tourism' }}>Hospitality & Tourism</option>
+                        <option value="Marketing & Sales" {{ 'selected' if job.category == 'Marketing & Sales' }}>Marketing & Sales</option>
+                        <option value="Transportation & Logistics" {{ 'selected' if job.category == 'Transportation & Logistics' }}>Transportation & Logistics</option>
+                        <option value="Art & Creative Design" {{ 'selected' if job.category == 'Art & Creative Design' }}>Art & Creative Design</option>
                     </select>
                 </div>
 
@@ -38,7 +47,7 @@
                         <option value="Full-time" {{ 'selected' if job.employment_type == 'Full-time' }}>Full-time</option>
                         <option value="Part-time" {{ 'selected' if job.employment_type == 'Part-time' }}>Part-time</option>
                         <option value="Contract" {{ 'selected' if job.employment_type == 'Contract' }}>Contract</option>
-                        <option value="Internship" {{ 'selected' if job.employment_type == 'Internship' }}>Internship</option>
+                        <option value="Remote" {{ 'selected' if job.employment_type == 'Remote' }}>Remote</option>
                     </select>
                 </div>
             </div>

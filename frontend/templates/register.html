@@ -37,7 +37,7 @@
                 Join Local Job Connect to find nearby jobs or local talent.
             </p>
             
-            <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
+            <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm" enctype="multipart/form-data">
                 <div class="form-tabs">
                     <button type="button" class="tab-btn active" data-role="job_seeker">
                         <i class="fas fa-user"></i> Job Seeker
@@ -83,8 +83,32 @@
                 
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="country">Country *</label>
+                        <select id="country" name="country" data-selected="{{ request.form.get('country', '') }}" required>
+                            <option value="">-- Select Country * --</option>
+                        </select>
+                        {% if errors and errors.country %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.country }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="state">State *</label>
+                        <select id="state" name="state" data-selected="{{ request.form.get('state', '') }}" required disabled>
+                            <option value="">-- Select State * --</option>
+                        </select>
+                        {% if errors and errors.state %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.state }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="city">City *</label>
-                        <input type="text" id="city" name="city" value="{{ request.form.get('city', '') }}" placeholder="e.g. Abuja, Lagos, Kano" required>
+                        <select id="city" name="city" data-selected="{{ request.form.get('city', '') }}" required disabled>
+                            <option value="">-- Select City * --</option>
+                        </select>
                         {% if errors and errors.city %}
                         <span class="field-error-hint" style="display: block;">{{ errors.city }}</span>
                         {% endif %}
@@ -110,6 +134,15 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="company_logo"><i class="fas fa-image"></i> Company Logo *</label>
+                        <input type="file" id="company_logo" name="company_logo" accept="image/*">
+                        <small style="color: var(--text-gray); display: block; margin-top: 4px;">Supported formats: PNG, JPG, JPEG, SVG. Max size 2MB.</small>
+                        {% if errors and errors.company_logo %}
+                        <span class="field-error-hint" style="display: block;">{{ errors.company_logo }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="company_description">Company Description</label>
                         <textarea id="company_description" name="company_description" rows="3" placeholder="Brief description of your company">{{ request.form.get('company_description', '') }}</textarea>
                     </div>
@@ -118,7 +151,6 @@
                 <div class="form-group">
                     <label for="password"><i class="fas fa-lock"></i> Password *</label>
                     <input type="password" id="password" name="password" placeholder="Create a strong password" required minlength="8">
-                    <small>Minimum 8 characters with uppercase, lowercase, and special characters</small>
                     {% if errors and errors.password %}
                     <span class="field-error-hint" style="display: block;">{{ errors.password }}</span>
                     {% endif %}
@@ -177,9 +209,11 @@
             if (role === 'employer') {
                 employerFields.style.display = 'block';
                 document.getElementById('company_name').required = true;
+                document.getElementById('company_logo').required = true;
             } else {
                 employerFields.style.display = 'none';
                 document.getElementById('company_name').required = false;
+                document.getElementById('company_logo').required = false;
             }
         });
     });

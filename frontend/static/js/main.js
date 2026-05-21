@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (userProfile) {
 					userProfile.style.position = 'static';
 				}
+				// Remove menu-open class when resizing to desktop
+				document.body.classList.remove('menu-open');
 			}
 		}
 		
@@ -78,10 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (window.innerWidth <= 768 && 
 			    navLinks.style.display === 'flex' && 
 			    !navLinks.contains(e.target) && 
-			    e.target !== menuBtn) {
+			    !menuBtn.contains(e.target)) {
 				navLinks.style.display = 'none';
 				menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
 				menuBtn.setAttribute('aria-expanded', 'false');
+				document.body.classList.remove('menu-open');
 			}
 		});
 		
@@ -93,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					navLinks.style.display = 'none';
 					menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
 					menuBtn.setAttribute('aria-expanded', 'false');
+					document.body.classList.remove('menu-open');
 				}
 			});
 		});
@@ -141,8 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		const input = group.querySelector('input, select, textarea');
 		if (!input) return;
 
-		// Skip hidden inputs and buttons
-		if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button') return;
+		// Skip all select dropdown fields entirely (Requirement: drop downs shouldn't have visual validation indicators)
+		if (input.tagName.toLowerCase() === 'select') return;
+
+		// Skip validation indicators for salary fields
+		if (input.name === 'salary_min' || input.name === 'salary_max') return;
 
 		// Create wrapper
 		const wrapper = document.createElement('div');
@@ -240,6 +247,358 @@ document.addEventListener('DOMContentLoaded', function() {
 			validateField();
 		}
 	});
+
+	// ── Character Counters for Textareas with Minlength (Requirement 5) ──
+	document.querySelectorAll('textarea[minlength]').forEach(textarea => {
+		const parent = textarea.parentNode;
+		const min = textarea.getAttribute('minlength');
+		const max = textarea.getAttribute('maxlength') || 12000;
+		
+		const counter = document.createElement('div');
+		counter.className = 'char-counter';
+		counter.style.cssText = 'text-align: right; font-size: 12px; color: var(--text-gray); margin-top: 6px; font-weight: 500;';
+		counter.innerHTML = `<span class="current">${textarea.value.length}</span> / <span class="max">${max}</span> characters (min ${min})`;
+		parent.appendChild(counter);
+		
+		textarea.addEventListener('input', () => {
+			const len = textarea.value.length;
+			counter.querySelector('.current').textContent = len;
+			if (len < min || len > max) {
+				counter.style.color = 'var(--danger-red)';
+			} else {
+				counter.style.color = 'var(--text-gray)';
+			}
+		});
+	});
+
+	// ── Hierarchical Country -> State -> City Pick Lists (Requirement 1 & 3) ──
+	const locationData = {
+		"Nigeria": {
+			"Lagos": ["Ikeja", "Lekki", "Surulere", "Yaba", "Victoria Island"],
+			"Abuja FCT": ["Garki", "Wuse", "Maitama", "Asokoro", "Gwarinpa"],
+			"Rivers": ["Port Harcourt", "Obio-Akpor", "Bonny", "Eleme"],
+			"Kano": ["Kano City", "Fagge", "Gwale", "Nasarawa"],
+			"Oyo": ["Ibadan", "Ogbomosho", "Oyo Town", "Saki"]
+		},
+		"United States": {
+			"California": ["Los Angeles", "San Francisco", "San Diego", "San Jose", "Sacramento"],
+			"New York": ["New York City", "Buffalo", "Rochester", "Syracuse", "Albany"],
+			"Texas": ["Houston", "Austin", "Dallas", "San Antonio", "Fort Worth"],
+			"Florida": ["Miami", "Orlando", "Tampa", "Jacksonville", "Tallahassee"]
+		},
+		"United Kingdom": {
+			"England": ["London", "Manchester", "Birmingham", "Leeds", "Liverpool"],
+			"Scotland": ["Edinburgh", "Glasgow", "Aberdeen", "Dundee"],
+			"Wales": ["Cardiff", "Swansea", "Newport"],
+			"Northern Ireland": ["Belfast", "Derry", "Lisburn"]
+		},
+		"Canada": {
+			"Ontario": ["Toronto", "Ottawa", "Mississauga", "Hamilton"],
+			"Quebec": ["Montreal", "Quebec City", "Laval", "Gatineau"],
+			"British Columbia": ["Vancouver", "Victoria", "Burnaby", "Surrey"],
+			"Alberta": ["Calgary", "Edmonton", "Red Deer", "Lethbridge"]
+		}
+	};
+
+	const countrySel = document.getElementById('country');
+	const stateSel = document.getElementById('state');
+	const citySel = document.getElementById('city');
+	const zipInput = document.getElementById('zip_code');
+
+	if (countrySel && stateSel && citySel) {
+		// We will store loaded lists dynamically to prevent redundant requests
+		let apiCountries = [];
+		let apiStates = {};
+		let apiCities = {};
+		let useFallback = false;
+
+		// Initialize Country loading
+		async function initLocationPickers() {
+			const initCountry = countrySel.getAttribute('data-selected');
+			const initState = stateSel.getAttribute('data-selected');
+			const initCity = citySel.getAttribute('data-selected');
+
+			countrySel.innerHTML = '<option value="">-- Loading countries... --</option>';
+			countrySel.disabled = true;
+
+			try {
+				const res = await fetch('https://countriesnow.space/api/v0.1/countries/iso');
+				if (!res.ok) throw new Error('API failed');
+				const json = await res.json();
+				if (json.error) throw new Error(json.msg);
+
+				apiCountries = json.data.map(c => c.name).sort();
+				
+				countrySel.innerHTML = '<option value="">-- Select Country * --</option>';
+				apiCountries.forEach(country => {
+					const opt = document.createElement('option');
+					opt.value = country;
+					opt.textContent = country;
+					countrySel.appendChild(opt);
+				});
+				countrySel.disabled = false;
+
+				if (initCountry) {
+					countrySel.value = initCountry;
+					await populateStates(initCountry, initState, initCity);
+				}
+			} catch (err) {
+				console.warn('Unable to load countries dynamically. Pivoting to fallback dataset...', err);
+				useFallback = true;
+				loadFallbackCountries(initCountry, initState, initCity);
+			}
+		}
+
+		function loadFallbackCountries(initCountry, initState, initCity) {
+			countrySel.innerHTML = '<option value="">-- Select Country * --</option>';
+			countrySel.disabled = false;
+			Object.keys(locationData).forEach(country => {
+				const opt = document.createElement('option');
+				opt.value = country;
+				opt.textContent = country;
+				countrySel.appendChild(opt);
+			});
+
+			if (initCountry && locationData[initCountry]) {
+				countrySel.value = initCountry;
+				populateStatesFallback(initCountry, initState, initCity);
+			}
+		}
+
+		async function populateStates(country, selectedState = '', selectedCity = '') {
+			stateSel.innerHTML = '<option value="">-- Loading states... --</option>';
+			citySel.innerHTML = '<option value="">-- Select City * --</option>';
+			stateSel.disabled = true;
+			citySel.disabled = true;
+
+			if (!country) {
+				stateSel.innerHTML = '<option value="">-- Select State * --</option>';
+				return;
+			}
+
+			if (useFallback || (locationData[country] && !apiCountries.length)) {
+				// If we have local fallback data or API already flagged to use fallback
+				populateStatesFallback(country, selectedState, selectedCity);
+				return;
+			}
+
+			try {
+				if (apiStates[country]) {
+					renderStates(country, apiStates[country], selectedState, selectedCity);
+					return;
+				}
+
+				const res = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ country })
+				});
+				if (!res.ok) throw new Error('States fetch failed');
+				const json = await res.json();
+				if (json.error) throw new Error(json.msg);
+
+				const states = json.data.states.map(s => s.name).sort();
+				apiStates[country] = states;
+				renderStates(country, states, selectedState, selectedCity);
+			} catch (err) {
+				console.warn(`States API failed for ${country}. Trying fallback...`, err);
+				if (locationData[country]) {
+					populateStatesFallback(country, selectedState, selectedCity);
+				} else {
+					stateSel.innerHTML = '<option value="">-- Select State * --</option>';
+					stateSel.disabled = true;
+				}
+			}
+		}
+
+		function renderStates(country, states, selectedState, selectedCity) {
+			stateSel.innerHTML = '<option value="">-- Select State * --</option>';
+			if (states.length === 0) {
+				const opt = document.createElement('option');
+				opt.value = 'N/A';
+				opt.textContent = 'N/A';
+				opt.selected = true;
+				stateSel.appendChild(opt);
+				stateSel.disabled = false;
+				populateCities(country, 'N/A', selectedCity);
+				return;
+			}
+
+			states.forEach(state => {
+				const opt = document.createElement('option');
+				opt.value = state;
+				opt.textContent = state;
+				if (state === selectedState) opt.selected = true;
+				stateSel.appendChild(opt);
+			});
+			stateSel.disabled = false;
+
+			if (selectedState) {
+				populateCities(country, selectedState, selectedCity);
+			}
+		}
+
+		function populateStatesFallback(country, selectedState = '', selectedCity = '') {
+			stateSel.innerHTML = '<option value="">-- Select State * --</option>';
+			citySel.innerHTML = '<option value="">-- Select City * --</option>';
+			stateSel.disabled = true;
+			citySel.disabled = true;
+
+			if (country && locationData[country]) {
+				stateSel.disabled = false;
+				Object.keys(locationData[country]).forEach(state => {
+					const opt = document.createElement('option');
+					opt.value = state;
+					opt.textContent = state;
+					if (state === selectedState) opt.selected = true;
+					stateSel.appendChild(opt);
+				});
+				if (selectedState) {
+					populateCitiesFallback(country, selectedState, selectedCity);
+				}
+			}
+		}
+
+		async function populateCities(country, state, selectedCity = '') {
+			citySel.innerHTML = '<option value="">-- Loading cities... --</option>';
+			citySel.disabled = true;
+
+			if (!country || !state) {
+				citySel.innerHTML = '<option value="">-- Select City * --</option>';
+				return;
+			}
+
+			if (useFallback || (locationData[country] && locationData[country][state])) {
+				populateCitiesFallback(country, state, selectedCity);
+				return;
+			}
+
+			try {
+				const cacheKey = `${country}_${state}`;
+				if (apiCities[cacheKey]) {
+					renderCities(apiCities[cacheKey], selectedCity);
+					return;
+				}
+
+				const res = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ country, state })
+				});
+				if (!res.ok) throw new Error('Cities fetch failed');
+				const json = await res.json();
+				if (json.error) throw new Error(json.msg);
+
+				const cities = json.data.sort();
+				apiCities[cacheKey] = cities;
+				renderCities(cities, selectedCity);
+			} catch (err) {
+				console.warn(`Cities API failed for ${country} -> ${state}. Trying fallback...`, err);
+				if (locationData[country] && locationData[country][state]) {
+					populateCitiesFallback(country, state, selectedCity);
+				} else {
+					citySel.innerHTML = '<option value="">-- Select City * --</option>';
+					citySel.disabled = true;
+				}
+			}
+		}
+
+		function renderCities(cities, selectedCity) {
+			citySel.innerHTML = '<option value="">-- Select City * --</option>';
+			if (cities.length === 0) {
+				const opt = document.createElement('option');
+				opt.value = 'N/A';
+				opt.textContent = 'N/A';
+				opt.selected = true;
+				citySel.appendChild(opt);
+				citySel.disabled = false;
+				return;
+			}
+
+			cities.forEach(city => {
+				const opt = document.createElement('option');
+				opt.value = city;
+				opt.textContent = city;
+				if (city === selectedCity) opt.selected = true;
+				citySel.appendChild(opt);
+			});
+			citySel.disabled = false;
+		}
+
+		function populateCitiesFallback(country, state, selectedCity = '') {
+			citySel.innerHTML = '<option value="">-- Select City * --</option>';
+			citySel.disabled = true;
+
+			if (country && state && locationData[country] && locationData[country][state]) {
+				citySel.disabled = false;
+				locationData[country][state].forEach(city => {
+					const opt = document.createElement('option');
+					opt.value = city;
+					opt.textContent = city;
+					if (city === selectedCity) opt.selected = true;
+					citySel.appendChild(opt);
+				});
+			}
+		}
+
+		// Event Listeners
+		countrySel.addEventListener('change', function() {
+			populateStates(this.value);
+			validateZip();
+		});
+
+		stateSel.addEventListener('change', function() {
+			populateCities(countrySel.value, this.value);
+			validateZip();
+		});
+
+		citySel.addEventListener('change', function() {
+			validateZip();
+		});
+
+		if (zipInput) {
+			zipInput.addEventListener('input', validateZip);
+		}
+
+		// ZIP / Postal Code Validation per Selected Country (Requirement 3: integer zip code)
+		function validateZip() {
+			if (!zipInput) return;
+			const country = countrySel.value;
+			const zip = zipInput.value.trim();
+
+			if (!zip) {
+				zipInput.setCustomValidity('');
+				return;
+			}
+
+			// ZIP must be pure digits (integer representation)
+			if (!/^\d+$/.test(zip)) {
+				zipInput.setCustomValidity('ZIP code must be a valid integer (digits only).');
+				return;
+			}
+
+			if (country === 'Nigeria') {
+				// 6-digit numeric pattern
+				if (!/^\d{6}$/.test(zip)) {
+					zipInput.setCustomValidity('Nigerian ZIP code must be exactly 6 digits (e.g. Lagos is 100001).');
+				} else {
+					zipInput.setCustomValidity('');
+				}
+			} else if (country === 'United States') {
+				// 5-digit numeric pattern
+				if (!/^\d{5}$/.test(zip)) {
+					zipInput.setCustomValidity('US ZIP code must be exactly 5 digits.');
+				} else {
+					zipInput.setCustomValidity('');
+				}
+			} else {
+				zipInput.setCustomValidity('');
+			}
+		}
+
+		// Initialize selectors
+		initLocationPickers();
+	}
 });
 
 // ── Clean and Fast Navigation ───────────────────────────────────────────────

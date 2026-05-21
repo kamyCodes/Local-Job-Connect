@@ -14,8 +14,19 @@
                 <option value="">All Categories</option>
                 <option value="Technology" {{ 'selected' if category == 'Technology' }}>Technology</option>
                 <option value="Healthcare" {{ 'selected' if category == 'Healthcare' }}>Healthcare</option>
+                <option value="Data-Science" {{ 'selected' if category == 'Data-Science' }}>Data Science</option>
+                <option value="Artificial Intelligence" {{ 'selected' if category == 'Artificial Intelligence' }}>Artificial Intelligence</option>
                 <option value="Retail" {{ 'selected' if category == 'Retail' }}>Retail</option>
                 <option value="Education" {{ 'selected' if category == 'Education' }}>Education</option>
+                <option value="Fashion" {{ 'selected' if category == 'Fashion' }}>Fashion</option>
+                <option value="Finance & Banking" {{ 'selected' if category == 'Finance & Banking' }}>Finance & Banking</option>
+                <option value="Customer Service" {{ 'selected' if category == 'Customer Service' }}>Customer Service</option>
+                <option value="Engineering" {{ 'selected' if category == 'Engineering' }}>Engineering</option>
+                <option value="Construction & Trades" {{ 'selected' if category == 'Construction & Trades' }}>Construction & Trades</option>
+                <option value="Hospitality & Tourism" {{ 'selected' if category == 'Hospitality & Tourism' }}>Hospitality & Tourism</option>
+                <option value="Marketing & Sales" {{ 'selected' if category == 'Marketing & Sales' }}>Marketing & Sales</option>
+                <option value="Transportation & Logistics" {{ 'selected' if category == 'Transportation & Logistics' }}>Transportation & Logistics</option>
+                <option value="Art & Creative Design" {{ 'selected' if category == 'Art & Creative Design' }}>Art & Creative Design</option>
             </select>
             <input type="number" name="radius" value="{{ radius }}" min="1" max="100" placeholder="Radius (km)" class="search-input" style="max-width: 150px;">
             <button type="submit" class="btn btn-primary btn-large">
@@ -39,8 +50,12 @@
         <div class="job-card">
             <div class="job-header">
                 <div style="display: flex; gap: 16px; align-items: start; flex: 1;">
-                    <div class="job-company-logo">
-                        {{ item.job.employer.company_name[0] }}
+                    <div class="job-company-logo" style="overflow: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; background: var(--bg-light); border: 1px solid var(--border-color);">
+                        {% if item.job.employer.company_logo %}
+                        <img src="{{ url_for('static', filename='uploads/logos/' + item.job.employer.company_logo) }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                        <span style="font-weight: bold; color: var(--primary-blue); font-size: 20px;">{{ item.job.employer.company_name[0] }}</span>
+                        {% endif %}
                     </div>
                     <div style="flex: 1;">
                         <h3 class="job-title">{{ item.job.title }}</h3>

@@ -5,7 +5,7 @@
     <div class="form-container">
         <h2><i class="fas fa-user-edit"></i> Edit Your Profile</h2>
         
-        <form method="POST" action="{{ url_for('main.edit_profile') }}">
+        <form method="POST" action="{{ url_for('main.edit_profile') }}" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="full_name"><i class="fas fa-user"></i> Full Name *</label>
                 <input type="text" id="full_name" name="full_name" value="{{ current_user.full_name }}" required>
@@ -28,8 +28,25 @@
 
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="country">Country *</label>
+                        <select id="country" name="country" data-selected="{{ current_user.country or '' }}" required>
+                            <option value="">-- Select Country * --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State *</label>
+                        <select id="state" name="state" data-selected="{{ current_user.state or '' }}" required disabled>
+                            <option value="">-- Select State * --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="city">City *</label>
-                        <input type="text" id="city" name="city" value="{{ current_user.city }}" required>
+                        <select id="city" name="city" data-selected="{{ current_user.city or '' }}" required disabled>
+                            <option value="">-- Select City * --</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="zip_code">ZIP Code *</label>
@@ -57,6 +74,42 @@
                     <label for="company_description">Company Description</label>
                     <textarea id="company_description" name="company_description" rows="4">{{ current_user.company_description or '' }}</textarea>
                 </div>
+
+                <div class="form-group" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <label style="font-weight: 600; color: var(--text-dark); margin-bottom: 10px; display: block;"><i class="fas fa-image"></i> Company Logo</label>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                        {% if current_user.company_logo %}
+                        <img src="{{ url_for('static', filename='uploads/logos/' + current_user.company_logo) }}" alt="Company Logo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                        {% else %}
+                        <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: var(--bg-light); border-radius: 12px; border: 1px dashed var(--border-color); color: var(--text-gray);">
+                            <i class="fas fa-building" style="font-size: 32px;"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            {% if current_user.logo_updated_at %}
+                            <small style="color: var(--text-gray); display: block;">
+                                <i class="fas fa-calendar-alt"></i> Logo last updated: {{ current_user.logo_updated_at.strftime('%Y-%m-%d %H:%M') }}
+                            </small>
+                            {% endif %}
+                            {% if days_until_logo_edit > 0 %}
+                            <span style="margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; background-color: rgba(245, 158, 11, 0.1); color: var(--warning-yellow); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid rgba(245, 158, 11, 0.2);">
+                                <i class="fas fa-lock"></i> Editing locked for {{ days_until_logo_edit }} more days
+                            </span>
+                            {% else %}
+                            <span style="margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; background-color: rgba(16, 185, 129, 0.1); color: var(--success-green); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <i class="fas fa-unlock"></i> Eligible to change logo
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if days_until_logo_edit <= 0 %}
+                    <input type="file" id="company_logo" name="company_logo" accept="image/*">
+                    <small style="color: var(--text-gray); display: block; margin-top: 4px;">Allowed formats: PNG, JPG, JPEG, SVG. Max size 2MB.</small>
+                    {% else %}
+                    <input type="file" id="company_logo" name="company_logo" accept="image/*" disabled>
+                    <small style="color: var(--danger-red); font-weight: 500; display: block; margin-top: 4px;">Logo edit is limited to once a year. You can change your logo again in {{ days_until_logo_edit }} days.</small>
+                    {% endif %}
+                </div>
             </div>
             {% endif %}
 
@@ -65,11 +118,76 @@
             </button>
         </form>
         
-        <p class="form-footer">
+        <!-- Danger Zone Section -->
+        <div style="margin-top: 40px; border-top: 2px dashed rgba(239, 68, 68, 0.2); padding-top: 30px;">
+            <h3 style="font-size: 18px; font-weight: 700; color: var(--danger-red); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-exclamation-triangle"></i> Danger Zone
+            </h3>
+            <p style="color: var(--text-gray); margin-bottom: 16px; font-size: 13.5px; line-height: 1.5;">
+                Once you delete your account, all your profile information, job postings, applications, and documents will be permanently removed. This action is irreversible.
+            </p>
+            <button type="button" class="btn" style="background-color: var(--danger-red); color: white; border: none; font-weight: 600; padding: 10px 20px; transition: background-color 0.2s;" onclick="openDeleteModal()">
+                <i class="fas fa-trash-alt"></i> Delete Account
+            </button>
+        </div>
+
+        <p class="form-footer" style="margin-top: 30px;">
             <a href="{{ url_for('main.profile') }}">
                 <i class="fas fa-arrow-left"></i> Back to profile
             </a>
         </p>
     </div>
 </div>
+
+<!-- Delete Account Password Confirmation Modal -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; padding: 24px;">
+    <div style="background: var(--bg-white); max-width: 440px; width: 100%; padding: 36px; border-radius: 20px; box-shadow: var(--shadow-2xl); position: relative; animation: modalSlideIn 0.3s ease;">
+        <button type="button" onclick="closeDeleteModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; color: var(--text-gray); cursor: pointer;">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 style="font-size: 22px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-user-minus" style="color: var(--danger-red);"></i> Delete Account?
+        </h3>
+        <p style="color: var(--text-gray); font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+            To permanently delete your account, please enter your password for confirmation.
+        </p>
+        
+        <form method="POST" action="{{ url_for('main.delete_account') }}">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="delete_password" style="font-weight: 600; margin-bottom: 8px; display: block; font-size: 14px;">Enter Password *</label>
+                <input type="password" id="delete_password" name="password" placeholder="Verify your password" required style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 15px;">
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" class="btn" style="background: var(--bg-light); color: var(--text-dark); border: 1px solid var(--border-color); padding: 8px 16px; font-size: 14px;" onclick="closeDeleteModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn" style="background: var(--danger-red); color: white; padding: 8px 16px; font-size: 14px;">
+                    Permanently Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'flex';
+        document.getElementById('delete_password').focus();
+    }
+    
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'none';
+        document.getElementById('delete_password').value = '';
+    }
+</script>
+
+<style>
+    @keyframes modalSlideIn {
+        from { transform: translateY(15px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
 {% endblock %}

@@ -74,3 +74,32 @@ def role_required(*roles):
             return fn(*args, **kwargs)
         return decorated_view
     return wrapper
+
+
+def get_user_greeting(user):
+    """Calculate personalized timezone-aware greetings natively based on country offset.
+    Nigeria: WAT (UTC+1)
+    United States: EST (UTC-5)
+    United Kingdom: GMT (UTC+0)
+    Canada: EST (UTC-5)
+    """
+    country = getattr(user, 'country', 'Nigeria') or 'Nigeria'
+    offset = 1  # Default to Nigeria WAT
+    if country == 'United States':
+        offset = -5
+    elif country == 'United Kingdom':
+        offset = 0
+    elif country == 'Canada':
+        offset = -5
+        
+    from datetime import datetime, timedelta
+    utc_now = datetime.utcnow()
+    local_time = utc_now + timedelta(hours=offset)
+    hour = local_time.hour
+    
+    if hour < 12:
+        return "Good morning"
+    elif hour < 18:
+        return "Good afternoon"
+    else:
+        return "Good evening"

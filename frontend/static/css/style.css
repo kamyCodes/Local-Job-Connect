@@ -755,16 +755,14 @@ body {
 
 /* ── Required field validation: only fires after a submit attempt ── */
 .was-validated .form-group input:invalid,
-.was-validated .form-group textarea:invalid,
-.was-validated .form-group select:invalid {
+.was-validated .form-group textarea:invalid {
     border-color: var(--danger-red);
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
     animation: shake 0.35s ease;
 }
 
 .was-validated .form-group input:valid,
-.was-validated .form-group textarea:valid,
-.was-validated .form-group select:valid {
+.was-validated .form-group textarea:valid {
     border-color: var(--success-green);
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.10);
 }
@@ -1215,6 +1213,11 @@ body {
     h2 { font-size: 20px; }
     h3 { font-size: 18px; }
     h4 { font-size: 16px; }
+
+    .main-content {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
 }
 
 /* Fix stat cards on mobile */
@@ -1274,6 +1277,11 @@ body {
     
     .job-card {
         padding: 12px;
+    }
+
+    .main-content {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 

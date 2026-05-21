@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask_login import login_required, current_user, logout_user
 from models import User, JobPosting
 from extensions import db
 from utils import geocode_address
+from datetime import datetime
+import os
 
 main_bp = Blueprint('main', __name__)
 
@@ -31,20 +33,45 @@ def profile():
 @main_bp.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    days_until_logo_edit = 0
+    if current_user.role == 'employer' and current_user.logo_updated_at:
+        delta = datetime.utcnow() - current_user.logo_updated_at
+        if delta.days < 365:
+            days_until_logo_edit = 365 - delta.days
+
     if request.method == 'POST':
         current_user.full_name = request.form.get('full_name')
         current_user.phone = request.form.get('phone')
         
         # Get new address fields
         new_address = request.form.get('address')
+        new_state = request.form.get('state')
+        new_country = request.form.get('country')
         new_city = request.form.get('city')
         new_zip = request.form.get('zip_code')
+        
+        # Validate ZIP Code as integer (Requirement 3: integer zip code)
+        if not new_zip or not new_zip.isdigit():
+            flash('ZIP Code must be a valid integer.', 'error')
+            return redirect(url_for('main.edit_profile'))
+        
+        # Country specific length validations
+        if new_country == 'Nigeria' and len(new_zip) != 6:
+            flash('Nigerian ZIP code must be exactly 6 digits.', 'error')
+            return redirect(url_for('main.edit_profile'))
+        elif new_country == 'United States' and len(new_zip) != 5:
+            flash('US ZIP code must be exactly 5 digits.', 'error')
+            return redirect(url_for('main.edit_profile'))
+        
+        new_zip_int = int(new_zip)
         
         # Check if address changed
         address_changed = (
             new_address != current_user.address or 
             new_city != current_user.city or 
-            new_zip != current_user.zip_code
+            new_state != current_user.state or
+            new_country != current_user.country or
+            new_zip_int != current_user.zip_code
         )
         
         if address_changed:
@@ -58,7 +85,9 @@ def edit_profile():
             # Update address and coordinates
             current_user.address = new_address
             current_user.city = new_city
-            current_user.zip_code = new_zip
+            current_user.state = new_state
+            current_user.country = new_country
+            current_user.zip_code = new_zip_int
             current_user.latitude = lat
             current_user.longitude = lng
         
@@ -66,8 +95,56 @@ def edit_profile():
             current_user.company_name = request.form.get('company_name')
             current_user.company_description = request.form.get('company_description')
             
+            # Handle company logo edits (rate-limited to once a year)
+            logo_file = request.files.get('company_logo')
+            if logo_file and logo_file.filename != '':
+                if days_until_logo_edit > 0:
+                    flash(f'You can only change your company logo once a year. You must wait {days_until_logo_edit} more days.', 'error')
+                else:
+                    ext = os.path.splitext(logo_file.filename)[1].lower()
+                    if ext not in ['.png', '.jpg', '.jpeg', '.gif', '.svg']:
+                        flash('Invalid logo format. Allowed: PNG, JPG, JPEG, GIF, SVG.', 'error')
+                    else:
+                        import uuid, time
+                        unique_logo_name = f"logo_{int(time.time())}_{uuid.uuid4().hex[:8]}{ext}"
+                        logo_path = os.path.join(current_app.config['LOGO_FOLDER'], unique_logo_name)
+                        logo_file.save(logo_path)
+                        current_user.company_logo = unique_logo_name
+                        current_user.logo_updated_at = datetime.utcnow()
+                        # Recalculate days until next edit (which will now be 365)
+                        days_until_logo_edit = 365
+            
         db.session.commit()
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('main.profile'))
         
-    return render_template('edit_profile.html')
+    return render_template('edit_profile.html', days_until_logo_edit=days_until_logo_edit)
+
+
+@main_bp.route('/profile/delete', methods=['POST'])
+@login_required
+def delete_account():
+    password = request.form.get('password')
+    if not password:
+        flash('Password is required to delete your account.', 'error')
+        return redirect(url_for('main.edit_profile'))
+        
+    if not current_user.check_password(password):
+        flash('Incorrect password. Account deletion cancelled.', 'error')
+        return redirect(url_for('main.edit_profile'))
+        
+    try:
+        db.session.delete(current_user)
+        db.session.commit()
+        logout_user()
+        
+        # Invalidate cache
+        from extensions import cache
+        cache.delete('active_job_postings')
+        
+        flash('Your account has been permanently deleted.', 'success')
+        return redirect(url_for('main.index'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred during account deletion: {str(e)}', 'error')
+        return redirect(url_for('main.edit_profile'))

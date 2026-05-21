@@ -10,7 +10,8 @@ from extensions import db, cache
 def get_cached_active_jobs():
     return JobPosting.query.filter_by(status='active').all()
 
-from utils import calculate_distance, role_required
+from utils import calculate_distance, role_required, get_user_greeting
+from sqlalchemy import func
 
 seeker_bp = Blueprint('seeker', __name__)
 
@@ -31,11 +32,31 @@ def job_seeker_dashboard():
     one_week_ago = datetime.utcnow() - timedelta(days=7)
     recent_apps_count = sum(1 for app in applications if app.submitted_at >= one_week_ago)
     
+    # Timezone-aware greeting
+    greeting = get_user_greeting(current_user)
+    
+    # Dynamic calculation of overall most popular active job
+    popular_job_query = db.session.query(
+        Application.job_id, func.count(Application.id).label('app_count')
+    ).join(JobPosting).filter(JobPosting.status == 'active').group_by(Application.job_id).order_by(db.text('app_count DESC')).first()
+    
+    most_popular_job = None
+    if popular_job_query:
+        most_popular_job = JobPosting.query.get(popular_job_query[0])
+        most_popular_job.application_count = popular_job_query[1]
+    else:
+        # Fallback to the latest active job if no applications have been submitted on any job yet
+        most_popular_job = JobPosting.query.filter_by(status='active').order_by(JobPosting.created_at.desc()).first()
+        if most_popular_job:
+            most_popular_job.application_count = 0
+            
     return render_template('job_seeker_dashboard.html', 
                            applications=applications, 
                            saved_jobs=saved_jobs, 
                            now=now,
-                           recent_apps_count=recent_apps_count)
+                           recent_apps_count=recent_apps_count,
+                           greeting=greeting,
+                           most_popular_job=most_popular_job)
 
 @seeker_bp.route('/jobs/search')
 @login_required
