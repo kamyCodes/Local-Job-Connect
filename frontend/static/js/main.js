@@ -127,15 +127,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	// ── Required-field red border on failed submit ──────────────────────────
 	document.querySelectorAll('form').forEach(function(form) {
 		form.addEventListener('submit', function(e) {
+			// 1. Force validation checks on all fields to update their custom validities (like password complexity, matches, ZIP format)
+			form.querySelectorAll('input, select, textarea').forEach(input => {
+				const event = new Event('input', { bubbles: true });
+				input.dispatchEvent(event);
+			});
+
+			// 2. Now check if the form is actually valid
 			if (!form.checkValidity()) {
 				e.preventDefault();
+				e.stopPropagation();
 				form.classList.add('was-validated');
-				
-				// Force validation check on all fields immediately
-				form.querySelectorAll('.input-wrapper input, .input-wrapper select, .input-wrapper textarea').forEach(input => {
-					const event = new Event('input', { bubbles: true });
-					input.dispatchEvent(event);
-				});
 			}
 		});
 	});
