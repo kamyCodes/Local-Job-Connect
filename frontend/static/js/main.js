@@ -260,3 +260,31 @@ document.addEventListener('DOMContentLoaded', function() {
 	window.addEventListener('scroll', handleScroll, { passive: true });
 	handleScroll(); // run once on load in case page is already scrolled
 })();
+
+// ── 10-Minute Inactivity Auto-Logout Timer ────────────────────────────────────
+(function () {
+	// Inactivity auto-logout only applies to logged-in users (indicated by logout button presence)
+	const logoutBtn = document.querySelector('.btn-logout');
+	if (!logoutBtn) return;
+
+	let inactivityTimeout;
+	const inactivityLimit = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+	function triggerAutoLogout() {
+		window.location.href = "/logout?timeout=1";
+	}
+
+	function resetInactivityTimer() {
+		clearTimeout(inactivityTimeout);
+		inactivityTimeout = setTimeout(triggerAutoLogout, inactivityLimit);
+	}
+
+	// Register user input interaction events to track active engagement
+	const events = ['mousemove', 'keypress', 'click', 'scroll', 'touchstart'];
+	events.forEach(function (event) {
+		document.addEventListener(event, resetInactivityTimer, { passive: true });
+	});
+
+	// Initialize inactivity tracking countdown on page load
+	resetInactivityTimer();
+})();

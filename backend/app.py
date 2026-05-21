@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from extensions import db, login_manager
+from extensions import db, login_manager, cache
 from models import User
 from routes.auth import auth_bp
 from routes.seeker import seeker_bp
@@ -49,6 +49,21 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+    
+    # Configure and initialize caching (SimpleCache is extremely fast and robust for web workloads)
+    app.config['CACHE_TYPE'] = 'SimpleCache'
+    app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+    cache.init_app(app)
+    
+    # Configure permanent session lifetime of exactly 10 minutes (600 seconds)
+    from datetime import timedelta
+    from flask import session
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
+    
+    @app.before_request
+    def refresh_session_lifetime():
+        session.permanent = True
+        session.modified = True
     
     # User loader callback for Flask-Login
     @login_manager.user_loader

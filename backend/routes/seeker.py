@@ -4,7 +4,12 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from models import JobPosting, Application, SavedJob, Resume
-from extensions import db
+from extensions import db, cache
+
+@cache.cached(timeout=300, key_prefix='active_job_postings')
+def get_cached_active_jobs():
+    return JobPosting.query.filter_by(status='active').all()
+
 from utils import calculate_distance, role_required
 
 seeker_bp = Blueprint('seeker', __name__)
@@ -40,21 +45,17 @@ def search_jobs():
     category = request.args.get('category', '')
     radius = float(request.args.get('radius', 25))
     
-    query = JobPosting.query.filter_by(status='active')
+    # Retrieve active job postings from the high-speed in-memory cache
+    jobs = get_cached_active_jobs()
     
+    # Filter in-memory to prevent multiple sequential database queries and minimize roundtrips
     if keyword:
-        query = query.filter(
-            db.or_(
-                JobPosting.title.ilike(f'%{keyword}%'),
-                JobPosting.description.ilike(f'%{keyword}%')
-            )
-        )
-    
+        keyword_lower = keyword.lower()
+        jobs = [j for j in jobs if keyword_lower in j.title.lower() or keyword_lower in j.description.lower()]
+        
     if category:
-        query = query.filter_by(category=category)
-    
-    jobs = query.all()
-    
+        jobs = [j for j in jobs if j.category == category]
+        
     jobs_with_distance = []
     for job in jobs:
         distance = calculate_distance(
@@ -69,7 +70,7 @@ def search_jobs():
                 'job': job,
                 'distance': round(distance, 2)
             })
-    
+            
     jobs_with_distance.sort(key=lambda x: x['distance'])
     
     return render_template('search_jobs.html', jobs_with_distance=jobs_with_distance, keyword=keyword, category=category, radius=radius)

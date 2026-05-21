@@ -4,7 +4,9 @@ from functools import wraps
 from flask import flash, redirect, url_for
 from flask_login import current_user
 from geopy.distance import geodesic
+from extensions import cache
 
+@cache.memoize(timeout=86400)  # Cache geocoded coordinate pairs for 24 hours
 def geocode_address(address, city, zip_code):
     """Convert address to latitude and longitude using Mapbox Geocoding API"""
     full_address = f"{address}, {city}, {zip_code}"

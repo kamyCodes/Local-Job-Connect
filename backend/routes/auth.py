@@ -79,6 +79,11 @@ def login():
             return redirect(url_for('employer.employer_dashboard'))
         return redirect(url_for('seeker.job_seeker_dashboard'))
 
+    # Display dynamic warning if user was auto-logged out due to 10 minutes of inactivity
+    timeout_logout = request.args.get('timeout')
+    if timeout_logout:
+        flash('You have been logged out due to 10 minutes of inactivity. Please log in again.', 'warning')
+
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -106,5 +111,11 @@ def login():
 @login_required
 def logout():
     logout_user()
+    
+    # Redirect directly to login with timeout warning parameter if logged out via inactivity
+    timeout_logout = request.args.get('timeout')
+    if timeout_logout:
+        return redirect(url_for('auth.login', timeout=1))
+        
     flash('You have been logged out.', 'success')
     return redirect(url_for('main.index'))

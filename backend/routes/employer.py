@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from collections import defaultdict
 from models import JobPosting, Application, Resume
-from extensions import db
+from extensions import db, cache
 from utils import role_required, is_within_service_area
 
 employer_bp = Blueprint('employer', __name__)
@@ -78,6 +78,7 @@ def create_job():
         
         db.session.add(job)
         db.session.commit()
+        cache.delete('active_job_postings')
         
         flash('Job posted successfully!', 'success')
         return redirect(url_for('employer.employer_dashboard'))
@@ -103,6 +104,7 @@ def edit_job(job_id):
         job.salary_max = float(request.form.get('salary_max')) if request.form.get('salary_max') else None
         
         db.session.commit()
+        cache.delete('active_job_postings')
         
         flash('Job updated successfully!', 'success')
         return redirect(url_for('employer.employer_dashboard'))
@@ -127,6 +129,7 @@ def toggle_job_status(job_id):
         flash('Job activated successfully!', 'success')
     
     db.session.commit()
+    cache.delete('active_job_postings')
     return redirect(url_for('employer.employer_dashboard'))
 
 @employer_bp.route('/employer/jobs/<int:job_id>/archive', methods=['POST'])
@@ -141,6 +144,7 @@ def archive_job(job_id):
     
     job.status = 'archived'
     db.session.commit()
+    cache.delete('active_job_postings')
     
     flash('Job archived successfully!', 'success')
     return redirect(url_for('employer.employer_dashboard'))
