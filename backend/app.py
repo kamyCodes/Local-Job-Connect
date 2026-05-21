@@ -28,6 +28,14 @@ def create_app():
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///local_job_connect.db'
     
+    # Configure robust connection arguments, SSL mode, and pre-ping parameters for PostgreSQL
+    if database_url and database_url.startswith('postgresql'):
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            "connect_args": {"sslmode": "require"},
+            "pool_pre_ping": True,
+            "pool_recycle": 280
+        }
+    
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     db.init_app(app)
