@@ -315,6 +315,101 @@ document.addEventListener('DOMContentLoaded', function() {
 		let useFallback = false;
 
 		// Initialize Country loading
+		// Helper to convert select to text input
+		function convertToManualInput(selectEl, fieldName, placeholderText) {
+			const parent = selectEl.parentNode;
+			if (!parent) return;
+
+			// Create text input
+			const textInput = document.createElement('input');
+			textInput.type = 'text';
+			textInput.id = selectEl.id;
+			textInput.name = fieldName;
+			textInput.className = 'manual-location-input';
+			textInput.placeholder = placeholderText;
+			textInput.required = selectEl.required;
+			
+			// Copy styling/attributes to match design aesthetics
+			textInput.style.width = '100%';
+			textInput.style.padding = '12px 16px';
+			textInput.style.border = '2px solid var(--border-color)';
+			textInput.style.borderRadius = '12px';
+			textInput.style.fontSize = '15px';
+			textInput.style.fontWeight = '500';
+			textInput.style.color = 'var(--text-dark)';
+			textInput.style.background = 'var(--bg-light)';
+			textInput.style.boxSizing = 'border-box';
+			textInput.style.transition = 'all 0.25s ease';
+
+			// Hide dropdown
+			selectEl.style.display = 'none';
+			selectEl.removeAttribute('name');
+			selectEl.required = false;
+
+			// Toggle back to dropdown list link
+			const linkWrapper = document.createElement('div');
+			linkWrapper.className = 'toggle-select-link-wrapper';
+			linkWrapper.style.marginTop = '6px';
+			linkWrapper.style.textAlign = 'right';
+
+			const toggleLink = document.createElement('a');
+			toggleLink.href = '#';
+			toggleLink.className = 'toggle-location-mode';
+			toggleLink.style.fontSize = '12.5px';
+			toggleLink.style.fontWeight = '700';
+			toggleLink.style.color = 'var(--primary-blue)';
+			toggleLink.style.textDecoration = 'none';
+			toggleLink.textContent = 'Choose from list';
+
+			toggleLink.addEventListener('click', function(e) {
+				e.preventDefault();
+				textInput.remove();
+				linkWrapper.remove();
+
+				selectEl.name = fieldName;
+				selectEl.required = textInput.required;
+				selectEl.style.display = '';
+				selectEl.value = '';
+
+				if (fieldName === 'country') {
+					stateSel.innerHTML = '<option value="">-- Select State * --</option>';
+					stateSel.disabled = true;
+					citySel.innerHTML = '<option value="">-- Select City * --</option>';
+					citySel.disabled = true;
+				} else if (fieldName === 'state') {
+					citySel.innerHTML = '<option value="">-- Select City * --</option>';
+					citySel.disabled = true;
+				}
+
+				validateZip();
+			});
+
+			linkWrapper.appendChild(toggleLink);
+
+			parent.insertBefore(textInput, selectEl.nextSibling);
+			parent.insertBefore(linkWrapper, textInput.nextSibling);
+
+			textInput.focus();
+
+			// Auto convert dependents
+			if (fieldName === 'country') {
+				const stateInput = parent.form ? parent.form.querySelector('input[name="state"]') : null;
+				if (!stateInput && stateSel.style.display !== 'none') {
+					convertToManualInput(stateSel, 'state', 'Enter State Name');
+				}
+				const cityInput = parent.form ? parent.form.querySelector('input[name="city"]') : null;
+				if (!cityInput && citySel.style.display !== 'none') {
+					convertToManualInput(citySel, 'city', 'Enter City Name');
+				}
+			} else if (fieldName === 'state') {
+				const cityInput = parent.form ? parent.form.querySelector('input[name="city"]') : null;
+				if (!cityInput && citySel.style.display !== 'none') {
+					convertToManualInput(citySel, 'city', 'Enter City Name');
+				}
+			}
+		}
+
+		// Initialize Country loading
 		async function initLocationPickers() {
 			const initCountry = countrySel.getAttribute('data-selected');
 			const initState = stateSel.getAttribute('data-selected');
@@ -338,9 +433,26 @@ document.addEventListener('DOMContentLoaded', function() {
 					opt.textContent = country;
 					countrySel.appendChild(opt);
 				});
+
+				// Add manual option at the end
+				const optCustom = document.createElement('option');
+				optCustom.value = '__custom__';
+				optCustom.textContent = '🔍 Other (Type Manually)...';
+				countrySel.appendChild(optCustom);
+
 				countrySel.disabled = false;
 
-				if (initCountry) {
+				const options = Array.from(countrySel.options).map(opt => opt.value);
+				if (initCountry && !options.includes(initCountry) && initCountry !== '__custom__') {
+					convertToManualInput(countrySel, 'country', 'Enter Country Name');
+					const customInput = document.getElementById('country');
+					if (customInput) customInput.value = initCountry;
+
+					const stateInput = document.getElementById('state');
+					if (stateInput) stateInput.value = initState || '';
+					const cityInput = document.getElementById('city');
+					if (cityInput) cityInput.value = initCity || '';
+				} else if (initCountry) {
 					countrySel.value = initCountry;
 					await populateStates(initCountry, initState, initCity);
 				}
@@ -361,7 +473,22 @@ document.addEventListener('DOMContentLoaded', function() {
 				countrySel.appendChild(opt);
 			});
 
-			if (initCountry && locationData[initCountry]) {
+			const optCustom = document.createElement('option');
+			optCustom.value = '__custom__';
+			optCustom.textContent = '🔍 Other (Type Manually)...';
+			countrySel.appendChild(optCustom);
+
+			const options = Array.from(countrySel.options).map(opt => opt.value);
+			if (initCountry && !options.includes(initCountry) && initCountry !== '__custom__') {
+				convertToManualInput(countrySel, 'country', 'Enter Country Name');
+				const customInput = document.getElementById('country');
+				if (customInput) customInput.value = initCountry;
+
+				const stateInput = document.getElementById('state');
+				if (stateInput) stateInput.value = initState || '';
+				const cityInput = document.getElementById('city');
+				if (cityInput) cityInput.value = initCity || '';
+			} else if (initCountry && locationData[initCountry]) {
 				countrySel.value = initCountry;
 				populateStatesFallback(initCountry, initState, initCity);
 			}
@@ -373,13 +500,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			stateSel.disabled = true;
 			citySel.disabled = true;
 
-			if (!country) {
+			if (!country || country === '__custom__') {
 				stateSel.innerHTML = '<option value="">-- Select State * --</option>';
 				return;
 			}
 
 			if (useFallback || (locationData[country] && !apiCountries.length)) {
-				// If we have local fallback data or API already flagged to use fallback
 				populateStatesFallback(country, selectedState, selectedCity);
 				return;
 			}
@@ -408,7 +534,11 @@ document.addEventListener('DOMContentLoaded', function() {
 					populateStatesFallback(country, selectedState, selectedCity);
 				} else {
 					stateSel.innerHTML = '<option value="">-- Select State * --</option>';
-					stateSel.disabled = true;
+					const optCustom = document.createElement('option');
+					optCustom.value = '__custom__';
+					optCustom.textContent = '🔍 Other (Type Manually)...';
+					stateSel.appendChild(optCustom);
+					stateSel.disabled = false;
 				}
 			}
 		}
@@ -430,12 +560,26 @@ document.addEventListener('DOMContentLoaded', function() {
 				const opt = document.createElement('option');
 				opt.value = state;
 				opt.textContent = state;
-				if (state === selectedState) opt.selected = true;
 				stateSel.appendChild(opt);
 			});
+
+			const optCustom = document.createElement('option');
+			optCustom.value = '__custom__';
+			optCustom.textContent = '🔍 Other (Type Manually)...';
+			stateSel.appendChild(optCustom);
+
 			stateSel.disabled = false;
 
-			if (selectedState) {
+			const options = Array.from(stateSel.options).map(opt => opt.value);
+			if (selectedState && !options.includes(selectedState) && selectedState !== '__custom__' && selectedState !== 'N/A') {
+				convertToManualInput(stateSel, 'state', 'Enter State Name');
+				const customInput = document.getElementById('state');
+				if (customInput) customInput.value = selectedState;
+
+				const cityInput = document.getElementById('city');
+				if (cityInput) cityInput.value = selectedCity || '';
+			} else if (selectedState) {
+				stateSel.value = selectedState;
 				populateCities(country, selectedState, selectedCity);
 			}
 		}
@@ -452,10 +596,24 @@ document.addEventListener('DOMContentLoaded', function() {
 					const opt = document.createElement('option');
 					opt.value = state;
 					opt.textContent = state;
-					if (state === selectedState) opt.selected = true;
 					stateSel.appendChild(opt);
 				});
-				if (selectedState) {
+
+				const optCustom = document.createElement('option');
+				optCustom.value = '__custom__';
+				optCustom.textContent = '🔍 Other (Type Manually)...';
+				stateSel.appendChild(optCustom);
+
+				const options = Array.from(stateSel.options).map(opt => opt.value);
+				if (selectedState && !options.includes(selectedState) && selectedState !== '__custom__' && selectedState !== 'N/A') {
+					convertToManualInput(stateSel, 'state', 'Enter State Name');
+					const customInput = document.getElementById('state');
+					if (customInput) customInput.value = selectedState;
+
+					const cityInput = document.getElementById('city');
+					if (cityInput) cityInput.value = selectedCity || '';
+				} else if (selectedState) {
+					stateSel.value = selectedState;
 					populateCitiesFallback(country, selectedState, selectedCity);
 				}
 			}
@@ -465,7 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			citySel.innerHTML = '<option value="">-- Loading cities... --</option>';
 			citySel.disabled = true;
 
-			if (!country || !state) {
+			if (!country || !state || country === '__custom__' || state === '__custom__') {
 				citySel.innerHTML = '<option value="">-- Select City * --</option>';
 				return;
 			}
@@ -500,7 +658,11 @@ document.addEventListener('DOMContentLoaded', function() {
 					populateCitiesFallback(country, state, selectedCity);
 				} else {
 					citySel.innerHTML = '<option value="">-- Select City * --</option>';
-					citySel.disabled = true;
+					const optCustom = document.createElement('option');
+					optCustom.value = '__custom__';
+					optCustom.textContent = '🔍 Other (Type Manually)...';
+					citySel.appendChild(optCustom);
+					citySel.disabled = false;
 				}
 			}
 		}
@@ -521,10 +683,24 @@ document.addEventListener('DOMContentLoaded', function() {
 				const opt = document.createElement('option');
 				opt.value = city;
 				opt.textContent = city;
-				if (city === selectedCity) opt.selected = true;
 				citySel.appendChild(opt);
 			});
+
+			const optCustom = document.createElement('option');
+			optCustom.value = '__custom__';
+			optCustom.textContent = '🔍 Other (Type Manually)...';
+			citySel.appendChild(optCustom);
+
 			citySel.disabled = false;
+
+			const options = Array.from(citySel.options).map(opt => opt.value);
+			if (selectedCity && !options.includes(selectedCity) && selectedCity !== '__custom__' && selectedCity !== 'N/A') {
+				convertToManualInput(citySel, 'city', 'Enter City Name');
+				const customInput = document.getElementById('city');
+				if (customInput) customInput.value = selectedCity;
+			} else if (selectedCity) {
+				citySel.value = selectedCity;
+			}
 		}
 
 		function populateCitiesFallback(country, state, selectedCity = '') {
@@ -537,24 +713,48 @@ document.addEventListener('DOMContentLoaded', function() {
 					const opt = document.createElement('option');
 					opt.value = city;
 					opt.textContent = city;
-					if (city === selectedCity) opt.selected = true;
 					citySel.appendChild(opt);
 				});
+
+				const optCustom = document.createElement('option');
+				optCustom.value = '__custom__';
+				optCustom.textContent = '🔍 Other (Type Manually)...';
+				citySel.appendChild(optCustom);
+
+				const options = Array.from(citySel.options).map(opt => opt.value);
+				if (selectedCity && !options.includes(selectedCity) && selectedCity !== '__custom__' && selectedCity !== 'N/A') {
+					convertToManualInput(citySel, 'city', 'Enter City Name');
+					const customInput = document.getElementById('city');
+					if (customInput) customInput.value = selectedCity;
+				} else if (selectedCity) {
+					citySel.value = selectedCity;
+				}
 			}
 		}
 
 		// Event Listeners
 		countrySel.addEventListener('change', function() {
-			populateStates(this.value);
+			if (this.value === '__custom__') {
+				convertToManualInput(this, 'country', 'Enter Country Name');
+			} else {
+				populateStates(this.value);
+			}
 			validateZip();
 		});
 
 		stateSel.addEventListener('change', function() {
-			populateCities(countrySel.value, this.value);
+			if (this.value === '__custom__') {
+				convertToManualInput(this, 'state', 'Enter State Name');
+			} else {
+				populateCities(countrySel.value, this.value);
+			}
 			validateZip();
 		});
 
 		citySel.addEventListener('change', function() {
+			if (this.value === '__custom__') {
+				convertToManualInput(this, 'city', 'Enter City Name');
+			}
 			validateZip();
 		});
 
