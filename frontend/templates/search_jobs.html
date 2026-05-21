@@ -36,77 +36,114 @@
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 24px;">
-        <h2 style="font-size: 24px; font-weight: 700;">
+        <h2 style="font-size: 24px; font-weight: 700; margin: 0;">
             <i class="fas fa-briefcase"></i> {{ jobs_with_distance|length }} Job{{ 's' if jobs_with_distance|length != 1 else '' }} Found
         </h2>
-        <div style="color: var(--text-gray); font-size: 14px;">
-            <i class="fas fa-map-marker-alt"></i> Within {{ radius }} km
-        </div>
     </div>
 
     {% if jobs_with_distance %}
-    <div class="job-list">
-        {% for item in jobs_with_distance %}
-        <div class="job-card">
-            <div class="job-header">
-                <div style="display: flex; gap: 16px; align-items: start; flex: 1;">
-                    <div class="job-company-logo" style="overflow: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; background: var(--bg-light); border: 1px solid var(--border-color);">
-                        {% if item.job.employer.company_logo %}
-                        <img src="{{ url_for('static', filename='uploads/logos/' + item.job.employer.company_logo) }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
-                        {% else %}
-                        <span style="font-weight: bold; color: var(--primary-blue); font-size: 20px;">{{ item.job.employer.company_name[0] }}</span>
+    <div class="search-layout-split">
+        <!-- Left Job Cards Pane -->
+        <div class="job-list-pane">
+            <div class="job-list">
+                {% for item in jobs_with_distance %}
+                <div class="job-card" data-job-id="{{ item.job.id }}" data-lat="{{ item.job.latitude }}" data-lng="{{ item.job.longitude }}" data-title="{{ item.job.title }}" data-company="{{ item.job.employer.company_name }}" data-salary-min="{{ item.job.salary_min or '' }}" data-salary-max="{{ item.job.salary_max or '' }}" data-distance="{{ item.distance }}" data-category="{{ item.job.category }}" data-match="{{ item.match_percentage }}">
+                    <div class="job-header">
+                        <div style="display: flex; gap: 16px; align-items: start; flex: 1;">
+                            <div class="job-company-logo" style="overflow: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; background: var(--bg-light); border: 1px solid var(--border-light);">
+                                {% if item.job.employer.company_logo %}
+                                <img src="{{ url_for('static', filename='uploads/logos/' + item.job.employer.company_logo) }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <span style="font-weight: bold; color: var(--primary-blue); font-size: 20px;">{{ item.job.employer.company_name[0] }}</span>
+                                {% endif %}
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 class="job-title" style="margin-bottom: 2px;">{{ item.job.title }}</h3>
+                                <p class="job-company" style="font-size: 14px; font-weight: 600;">
+                                    <i class="fas fa-building"></i> {{ item.job.employer.company_name }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <!-- Premium Skills Fit Circle Meter -->
+                            <div class="skill-match-container" title="Skills Match Fit Meter: {{ item.match_percentage }}%">
+                                <div class="skills-progress-ring">
+                                    <svg width="52" height="52">
+                                        <circle class="skills-ring-circle skills-ring-bg" cx="26" cy="26" r="22"></circle>
+                                        <circle class="skills-ring-circle skills-ring-bar" cx="26" cy="26" r="22" stroke-dasharray="138.23" stroke-dashoffset="{{ 138.23 - (138.23 * item.match_percentage / 100) }}" style="stroke: {% if item.match_percentage >= 80 %}var(--success-green){% elif item.match_percentage >= 50 %}var(--warning-yellow){% else %}var(--primary-blue){% endif %};"></circle>
+                                    </svg>
+                                    <span class="skills-ring-text">{{ item.match_percentage }}%</span>
+                                </div>
+                            </div>
+                            
+                            <span class="job-distance">
+                                <i class="fas fa-map-marker-alt"></i> {{ item.distance }} km
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="job-details">
+                        <div class="job-detail">
+                            <i class="fas fa-briefcase"></i>
+                            {{ item.job.employment_type }}
+                        </div>
+                        <div class="job-detail">
+                            <i class="fas fa-tag"></i>
+                            {{ item.job.category }}
+                        </div>
+                        {% if item.job.salary_min and item.job.salary_max %}
+                        <div class="job-detail">
+                            <i class="fas fa-money-bill-wave"></i>
+                            ₦{{ '{:,.0f}'.format(item.job.salary_min) }} - ₦{{ '{:,.0f}'.format(item.job.salary_max) }}
+                        </div>
+                        {% endif %}
+                        <div class="job-detail">
+                            <i class="fas fa-map-pin"></i>
+                            {{ item.job.city }}
+                        </div>
+                    </div>
+                    
+                    <p class="job-description">{{ item.job.description[:180] }}...</p>
+                    
+                    <!-- Skill Tags Match Preview -->
+                    {% if item.matched_skills or item.missing_skills %}
+                    <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-gray); margin-right: 4px;">Skills Fit:</span>
+                        {% for skill in item.matched_skills[:3] %}
+                        <span class="skills-match-tag matched"><i class="fas fa-check"></i> {{ skill }}</span>
+                        {% endfor %}
+                        {% for skill in item.missing_skills[:3] %}
+                        <span class="skills-match-tag missing"><i class="fas fa-plus"></i> {{ skill }}</span>
+                        {% endfor %}
+                        {% if (item.matched_skills|length + item.missing_skills|length) > 6 %}
+                        <span style="font-size: 11px; color: var(--text-gray); font-weight: 600;">+{{ (item.matched_skills|length + item.missing_skills|length) - 6 }} more</span>
                         {% endif %}
                     </div>
-                    <div style="flex: 1;">
-                        <h3 class="job-title">{{ item.job.title }}</h3>
-                        <p class="job-company">
-                            <i class="fas fa-building"></i> {{ item.job.employer.company_name }}
-                        </p>
+                    {% endif %}
+                    
+                    <div class="job-actions">
+                        <a href="{{ url_for('seeker.view_job', job_id=item.job.id) }}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                        <form method="POST" action="{{ url_for('seeker.save_job', job_id=item.job.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-heart"></i> Save
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <span class="job-distance">
-                    <i class="fas fa-map-marker-alt"></i> {{ item.distance }} km away
-                </span>
-            </div>
-            
-            <div class="job-details">
-                <div class="job-detail">
-                    <i class="fas fa-briefcase"></i>
-                    {{ item.job.employment_type }}
-                </div>
-                <div class="job-detail">
-                    <i class="fas fa-tag"></i>
-                    {{ item.job.category }}
-                </div>
-                {% if item.job.salary_min and item.job.salary_max %}
-                <div class="job-detail">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₦{{ '{:,.0f}'.format(item.job.salary_min) }} - ₦{{ '{:,.0f}'.format(item.job.salary_max) }}
-                </div>
-                {% endif %}
-                <div class="job-detail">
-                    <i class="fas fa-map-pin"></i>
-                    {{ item.job.city }}
-                </div>
-            </div>
-            
-            <p class="job-description">{{ item.job.description[:200] }}...</p>
-            
-            <div class="job-actions">
-                <a href="{{ url_for('seeker.view_job', job_id=item.job.id) }}" class="btn btn-primary">
-                    <i class="fas fa-eye"></i> View Details
-                </a>
-                <form method="POST" action="{{ url_for('seeker.save_job', job_id=item.job.id) }}" style="display: inline;">
-                    <button type="submit" class="btn btn-secondary">
-                        <i class="fas fa-heart"></i> Save
-                    </button>
-                </form>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
+        
+        <!-- Right Live Sticky Map Pane -->
+        <div class="map-pane">
+            <div id="leaflet-job-map"></div>
+        </div>
     </div>
     {% else %}
-    <div style="background: var(--bg-white); padding: 80px 40px; border-radius: 16px; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="background: var(--bg-white); padding: 80px 40px; border-radius: 16px; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);">
         <i class="fas fa-search" style="font-size: 64px; color: var(--text-gray); opacity: 0.3; margin-bottom: 24px;"></i>
         <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">No jobs found</h3>
         <p style="color: var(--text-gray); font-size: 16px; margin-bottom: 24px;">

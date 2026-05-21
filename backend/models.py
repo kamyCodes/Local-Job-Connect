@@ -22,6 +22,7 @@ class User(UserMixin, db.Model):
     zip_code = db.Column(db.Integer, index=True)
     company_logo = db.Column(db.String(255))
     logo_updated_at = db.Column(db.DateTime)
+    address_updated_at = db.Column(db.DateTime)
     
     # Geographic coordinates
     latitude = db.Column(db.Float)
@@ -30,6 +31,8 @@ class User(UserMixin, db.Model):
     # Role-specific fields
     company_name = db.Column(db.String(100))
     company_description = db.Column(db.Text)
+    skills = db.Column(db.Text)  # Comma-separated seeker skills
+
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -60,6 +63,7 @@ class JobPosting(db.Model):
     # Job Details
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    skills_required = db.Column(db.Text)  # Comma-separated required skills
     category = db.Column(db.String(50), nullable=False, index=True)
     employment_type = db.Column(db.String(50))
     salary_min = db.Column(db.Float)
@@ -132,6 +136,25 @@ class SavedJob(db.Model):
     
     def __repr__(self):
         return f'<SavedJob {self.id}>'
+
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey('job_postings.id'), nullable=True)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    is_read = db.Column(db.Boolean, default=False, index=True)
+    
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_messages')
+    job = db.relationship('JobPosting', backref='messages')
+    
+    def __repr__(self):
+        return f'<Message {self.id} from {self.sender_id} to {self.recipient_id}>'
 
 
 @login_manager.user_loader

@@ -17,25 +17,38 @@
             </div>
 
             <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; margin-bottom: 24px;">
-                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark);">
-                    <i class="fas fa-map-marker-alt"></i> Address Information
-                </h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+                    <h4 style="font-size: 16px; font-weight: 700; margin: 0; color: var(--text-dark);">
+                        <i class="fas fa-map-marker-alt"></i> Address Information
+                    </h4>
+                    <div>
+                        {% if days_until_address_edit > 0 %}
+                        <span style="display: inline-flex; align-items: center; gap: 4px; background-color: rgba(245, 158, 11, 0.1); color: var(--warning-yellow); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <i class="fas fa-lock"></i> Address Locked for {{ days_until_address_edit }} days
+                        </span>
+                        {% else %}
+                        <span style="display: inline-flex; align-items: center; gap: 4px; background-color: rgba(16, 185, 129, 0.1); color: var(--success-green); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <i class="fas fa-unlock"></i> Eligible to change address
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label for="address">Street Address *</label>
-                    <input type="text" id="address" name="address" value="{{ current_user.address }}" required>
+                    <input type="text" id="address" name="address" value="{{ current_user.address }}" required {% if days_until_address_edit > 0 %}disabled{% endif %}>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="country">Country *</label>
-                        <select id="country" name="country" data-selected="{{ current_user.country or '' }}" required>
+                        <select id="country" name="country" data-selected="{{ current_user.country or '' }}" required {% if days_until_address_edit > 0 %}data-locked="true" disabled{% endif %}>
                             <option value="">-- Select Country * --</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="state">State *</label>
-                        <select id="state" name="state" data-selected="{{ current_user.state or '' }}" required disabled>
+                        <select id="state" name="state" data-selected="{{ current_user.state or '' }}" required disabled {% if days_until_address_edit > 0 %}data-locked="true"{% endif %}>
                             <option value="">-- Select State * --</option>
                         </select>
                     </div>
@@ -44,13 +57,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="city">City *</label>
-                        <select id="city" name="city" data-selected="{{ current_user.city or '' }}" required disabled>
+                        <select id="city" name="city" data-selected="{{ current_user.city or '' }}" required disabled {% if days_until_address_edit > 0 %}data-locked="true"{% endif %}>
                             <option value="">-- Select City * --</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="zip_code">ZIP Code *</label>
-                        <input type="text" id="zip_code" name="zip_code" value="{{ current_user.zip_code }}" required>
+                        <input type="text" id="zip_code" name="zip_code" value="{{ current_user.zip_code }}" required {% if days_until_address_edit > 0 %}disabled{% endif %}>
                     </div>
                 </div>
                 
@@ -58,6 +71,24 @@
                     <i class="fas fa-info-circle"></i> Changing your address will update your location for job search results
                 </small>
             </div>
+
+            {% if current_user.role == 'job_seeker' %}
+            <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark);">
+                    <i class="fas fa-magic" style="color: var(--primary-light);"></i> Seeker Skills & Expertise
+                </h4>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="skills_input_raw">My Skills (Press Enter or Comma to add)</label>
+                    <div class="skills-tags-input-container" id="skills-tags-container">
+                        <!-- Chips will be generated dynamically by JS -->
+                        <input type="text" id="skills_input_raw" class="skills-tag-input-raw" placeholder="Add a skill (e.g. Python, SQL)...">
+                    </div>
+                    <!-- Hidden input to store comma-separated string -->
+                    <input type="hidden" name="skills" id="skills_hidden" value="{{ current_user.skills or '' }}">
+                    <small style="margin-top: 8px; display: block;"><i class="fas fa-info-circle"></i> Add your skills to show employers your compatibility match percentage.</small>
+                </div>
+            </div>
+            {% endif %}
 
             {% if current_user.role == 'employer' %}
             <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; margin-bottom: 24px;">

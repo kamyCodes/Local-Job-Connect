@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, current_app, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 from collections import defaultdict
-from models import JobPosting, Application, Resume
+from models import JobPosting, Application, Resume, Message
 from extensions import db, cache
 from utils import role_required, is_within_service_area, get_user_greeting
 
@@ -45,13 +45,31 @@ def employer_dashboard():
 @role_required('employer')
 def create_job():
     if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
         category = request.form.get('category')
         employment_type = request.form.get('employment_type')
         salary_min = request.form.get('salary_min')
         salary_max = request.form.get('salary_max')
         
+        if len(title) > 120:
+            flash('Job title cannot exceed 120 characters.', 'error')
+            return redirect(url_for('employer.create_job'))
+            
+        if len(description) < 100:
+            flash('Job description must be at least 100 characters.', 'error')
+            return redirect(url_for('employer.create_job'))
+            
+        try:
+            s_min = float(salary_min) if salary_min else None
+            s_max = float(salary_max) if salary_max else None
+            if s_min is not None and s_max is not None and s_max <= s_min:
+                flash('Maximum salary must be strictly greater than minimum salary.', 'error')
+                return redirect(url_for('employer.create_job'))
+        except ValueError:
+            flash('Invalid salary values.', 'error')
+            return redirect(url_for('employer.create_job'))
+            
         # Use employer's location
         lat = current_user.latitude
         lng = current_user.longitude
@@ -60,7 +78,9 @@ def create_job():
             flash('Your company profile is missing location data. Please update your profile first.', 'error')
             return redirect(url_for('profile.edit_profile'))
         
-        if not is_within_service_area(lat, lng):
+        # Bypass service area validation for non-Nigerian users
+        is_nigerian = (not current_user.country or current_user.country.strip().lower() == 'nigeria')
+        if is_nigerian and not is_within_service_area(lat, lng):
             flash('Your location is outside our service area!', 'error')
             return redirect(url_for('employer.create_job'))
         
@@ -68,6 +88,7 @@ def create_job():
             employer_id=current_user.id,
             title=title,
             description=description,
+            skills_required=request.form.get('skills_required'),
             category=category,
             employment_type=employment_type,
             salary_min=float(salary_min) if salary_min else None,
@@ -101,12 +122,39 @@ def edit_job(job_id):
         return redirect(url_for('employer.employer_dashboard'))
     
     if request.method == 'POST':
-        job.title = request.form.get('title')
-        job.description = request.form.get('description')
-        job.category = request.form.get('category')
-        job.employment_type = request.form.get('employment_type')
-        job.salary_min = float(request.form.get('salary_min')) if request.form.get('salary_min') else None
-        job.salary_max = float(request.form.get('salary_max')) if request.form.get('salary_max') else None
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        skills_required = request.form.get('skills_required')
+        category = request.form.get('category')
+        employment_type = request.form.get('employment_type')
+        salary_min = request.form.get('salary_min')
+        salary_max = request.form.get('salary_max')
+        
+        if len(title) > 120:
+            flash('Job title cannot exceed 120 characters.', 'error')
+            return redirect(url_for('employer.edit_job', job_id=job_id))
+            
+        if len(description) < 100:
+            flash('Job description must be at least 100 characters.', 'error')
+            return redirect(url_for('employer.edit_job', job_id=job_id))
+            
+        try:
+            s_min = float(salary_min) if salary_min else None
+            s_max = float(salary_max) if salary_max else None
+            if s_min is not None and s_max is not None and s_max <= s_min:
+                flash('Maximum salary must be strictly greater than minimum salary.', 'error')
+                return redirect(url_for('employer.edit_job', job_id=job_id))
+        except ValueError:
+            flash('Invalid salary values.', 'error')
+            return redirect(url_for('employer.edit_job', job_id=job_id))
+            
+        job.title = title
+        job.description = description
+        job.skills_required = skills_required
+        job.category = category
+        job.employment_type = employment_type
+        job.salary_min = s_min
+        job.salary_max = s_max
         
         db.session.commit()
         cache.delete('active_job_postings')
@@ -154,6 +202,47 @@ def archive_job(job_id):
     flash('Job archived successfully!', 'success')
     return redirect(url_for('employer.employer_dashboard'))
 
+@employer_bp.route('/employer/jobs/<int:job_id>/unarchive', methods=['POST'])
+@login_required
+@role_required('employer')
+def unarchive_job(job_id):
+    job = JobPosting.query.get_or_404(job_id)
+    
+    if job.employer_id != current_user.id:
+        flash('Access denied!', 'error')
+        return redirect(url_for('employer.employer_dashboard'))
+    
+    job.status = 'active'
+    db.session.commit()
+    cache.delete('active_job_postings')
+    
+    flash('Job unarchived and set to active successfully!', 'success')
+    return redirect(url_for('employer.employer_dashboard'))
+
+
+@employer_bp.route('/employer/jobs/<int:job_id>/delete', methods=['POST'])
+@login_required
+@role_required('employer')
+def delete_job(job_id):
+    job = JobPosting.query.get_or_404(job_id)
+    
+    if job.employer_id != current_user.id:
+        flash('Access denied!', 'error')
+        return redirect(url_for('employer.employer_dashboard'))
+    
+    # Nullify job_id association in message logs so that chats are not broken
+    Message.query.filter_by(job_id=job.id).update({Message.job_id: None})
+    
+    # Cascade deletes applications and saved jobs automatically via SQLite cascade
+    db.session.delete(job)
+    db.session.commit()
+    
+    cache.delete('active_job_postings')
+    
+    flash('Job posting and all associated candidate applications deleted successfully!', 'success')
+    return redirect(url_for('employer.employer_dashboard'))
+
+
 @employer_bp.route('/employer/jobs/<int:job_id>/applications')
 @login_required
 @role_required('employer')
@@ -192,6 +281,33 @@ def update_application_status(application_id):
     
     flash('Application status updated!', 'success')
     return redirect(url_for('employer.view_applications', job_id=application.job_id))
+
+
+@employer_bp.route('/api/applications/<int:application_id>/status', methods=['POST'])
+@login_required
+@role_required('employer')
+def update_application_status_api(application_id):
+    application = Application.query.get_or_404(application_id)
+    
+    if application.job.employer_id != current_user.id:
+        return jsonify({'error': 'Access denied!'}), 403
+        
+    data = request.get_json() or {}
+    new_status = data.get('status')
+    
+    valid_statuses = ['applied', 'under_review', 'interview', 'accepted', 'rejected']
+    if new_status not in valid_statuses:
+        return jsonify({'error': 'Invalid status!'}), 400
+        
+    application.status = new_status
+    db.session.commit()
+    
+    return jsonify({
+        'success': True,
+        'application_id': application_id,
+        'status': new_status
+    })
+
 
 @employer_bp.route('/analytics')
 @login_required

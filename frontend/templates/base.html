@@ -5,6 +5,14 @@
     <!-- MOBILE VIEWPORT - ESSENTIAL FOR RESPONSIVE DESIGN -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     
+    <!-- Immediate theme initializer to prevent flash of light mode -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
     <!-- SEO Meta Tags -->
     <meta name="description" content="Local Job Connect - Find local job opportunities in your community">
     <meta name="keywords" content="local jobs, employment, job search, hiring">
@@ -21,6 +29,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -183,6 +192,87 @@
         </div>
     </footer>
 
+    <!-- Floating Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    {% if current_user.is_authenticated %}
+    <!-- Floating Chat Trigger Widget -->
+    <button id="chat-widget-trigger" class="chat-trigger-btn" aria-label="Open messaging">
+        <i class="fas fa-comments"></i>
+        <span id="chat-badge-count" class="chat-trigger-badge" style="display: none;">0</span>
+    </button>
+
+    <!-- Sliding Glass Messaging Drawer -->
+    <div id="chat-drawer" class="chat-drawer">
+        <div class="chat-drawer-header">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-dark);"><i class="fas fa-comments" style="color: var(--primary-blue); margin-right: 6px;"></i> In-App Chat</h3>
+            <button id="chat-drawer-close" class="chat-drawer-close" aria-label="Close messaging">&times;</button>
+        </div>
+        
+        <!-- Contacts Pane -->
+        <div id="chat-contacts-pane" class="chat-contacts-pane">
+            <div style="padding: 12px; border-bottom: 1px solid var(--glass-border);">
+                <input type="text" id="chat-contact-search" class="chat-input-field" placeholder="Search contacts..." style="width: 100%; margin: 0;">
+            </div>
+            <div id="chat-contacts-list" class="chat-contacts-list">
+                <!-- Contact items loaded dynamically -->
+            </div>
+        </div>
+        
+        <!-- Conversation Pane -->
+        <div id="chat-conversation-pane" class="chat-conversation-pane">
+            <div class="chat-conv-header">
+                <button id="chat-conv-back" class="chat-conv-back" aria-label="Back to contacts">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="chat-active-contact-avatar" class="chat-contact-avatar">U</div>
+                <div class="chat-contact-details">
+                    <div id="chat-active-contact-name" class="chat-contact-name">User Name</div>
+                    <div id="chat-active-contact-status" class="chat-contact-preview">Offline</div>
+                </div>
+            </div>
+            
+            <div id="chat-messages-area" class="chat-messages-area">
+                <!-- Messages load dynamically -->
+            </div>
+            
+            <div id="chat-typing-indicator" class="typing-indicator" style="display: none; margin: 0 16px 12px 16px;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+            
+            <form id="chat-input-form" class="chat-input-area">
+                <input type="text" id="chat-message-input" class="chat-input-field" placeholder="Type a message..." autocomplete="off" required>
+                <button type="submit" class="chat-send-btn" aria-label="Send message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Global Glassmorphic Custom Modals -->
+    <div id="custom-modal-overlay" class="custom-modal-overlay" style="display: none;">
+        <div class="custom-modal-card">
+            <div class="custom-modal-header">
+                <h4 id="custom-modal-title">Notification</h4>
+                <button id="custom-modal-close" class="custom-modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <p id="custom-modal-message"></p>
+            </div>
+            <div class="custom-modal-footer">
+                <button id="custom-modal-cancel" class="btn btn-secondary" style="display: none;">Cancel</button>
+                <button id="custom-modal-confirm" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet.js library and application scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>

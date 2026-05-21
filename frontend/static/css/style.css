@@ -24,6 +24,54 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    
+    /* Glassmorphic values */
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --card-glow: rgba(30, 58, 138, 0.04);
+
+    /* Alert theme-specific colors */
+    --warning-bg: #fff3cd;
+    --warning-text: #856404;
+    --success-bg: #d1fae5;
+    --success-text: #065f46;
+    --danger-bg: #fecaca;
+    --danger-text: #991b1b;
+    --info-bg: #dbeafe;
+    --info-text: #1e40af;
+}
+
+[data-theme="dark"] {
+    --primary-blue: #6366f1;
+    --primary-light: #818cf8;
+    --secondary-blue: #a5b4fc;
+    --success-green: #34d399;
+    --warning-yellow: #fbbf24;
+    --danger-red: #f87171;
+    --bg-light: #070b14;
+    --bg-white: #0f172a;
+    --text-dark: #f8fafc;
+    --text-gray: #94a3b8;
+    --border-light: rgba(255, 255, 255, 0.08);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    
+    /* Glassmorphic values */
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --card-glow: rgba(99, 102, 241, 0.15);
+
+    /* Alert theme-specific colors */
+    --warning-bg: rgba(245, 158, 11, 0.15);
+    --warning-text: #fbbf24;
+    --success-bg: rgba(16, 185, 129, 0.15);
+    --success-text: #34d399;
+    --danger-bg: rgba(239, 68, 68, 0.15);
+    --danger-text: #f87171;
+    --info-bg: rgba(99, 102, 241, 0.15);
+    --info-text: #a5b4fc;
 }
 
 body {
@@ -375,7 +423,7 @@ body {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%);
     padding: 24px;
     border-radius: 16px;
     border: 1px solid var(--border-light);
@@ -1614,4 +1662,933 @@ body.menu-open {
         transform: translateY(-50%) scale(1);
         opacity: 1;
     }
+}
+
+/* ============================================================================
+   PREMIUM ENHANCEMENT SUITE - GLOBAL CSS
+   ============================================================================ */
+
+/* ---- Dark Mode Base & Common Component Overrides ---- */
+[data-theme="dark"] body {
+    background: 
+        linear-gradient(rgba(7, 11, 20, 0.94), rgba(7, 11, 20, 0.94)),
+        url('../images/abstract_bg.jpg') center/cover no-repeat fixed;
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .page-loading {
+    background: rgba(7, 11, 20, 0.96) !important;
+}
+
+[data-theme="dark"] .page-loading h3 {
+    color: var(--text-dark) !important;
+}
+
+[data-theme="dark"] .navbar {
+    background: rgba(15, 23, 42, 0.35);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .navbar.scrolled {
+    background: rgba(15, 23, 42, 0.75);
+}
+
+[data-theme="dark"] .card, 
+[data-theme="dark"] .job-card, 
+[data-theme="dark"] .form-container, 
+[data-theme="dark"] #deleteModal > div {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.3),
+        0 0 0 1px var(--glass-border) inset;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: rgba(7, 11, 20, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Floating Theme Toggle Button ---- */
+.theme-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--primary-blue);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: var(--shadow-xl), 0 0 20px var(--primary-light);
+    color: var(--primary-light);
+}
+
+.theme-toggle-btn i {
+    transition: transform 0.5s ease;
+}
+
+/* ---- Interactive Leaflet Map Split Layout ---- */
+.search-layout-split {
+    display: flex;
+    gap: 24px;
+    position: relative;
+}
+
+.job-list-pane {
+    flex: 1.3;
+    min-width: 0;
+}
+
+.map-pane {
+    flex: 1;
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 136px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    z-index: 10;
+}
+
+#leaflet-job-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Leaflet Dark Mode Customizer */
+[data-theme="dark"] .map-pane {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .leaflet-tile-container img {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.leaflet-popup-content-wrapper {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--shadow-lg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    color: var(--text-dark) !important;
+    border-radius: 12px !important;
+    padding: 6px;
+}
+
+.leaflet-popup-tip {
+    background: var(--glass-bg) !important;
+    border-left: 1px solid var(--glass-border) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+}
+
+.leaflet-popup-content {
+    margin: 8px 12px !important;
+    line-height: 1.4 !important;
+}
+
+/* pulsing user home radar */
+.pulse-user-marker {
+    background: rgba(59, 130, 246, 0.2);
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    box-shadow: 0 0 10px #3b82f6;
+    animation: userPulse 2s infinite ease-out;
+}
+
+@keyframes userPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* ---- Kanban Board Structure ---- */
+.kanban-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.kanban-toggle-group {
+    display: flex;
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.kanban-toggle-btn {
+    border: none;
+    background: none;
+    padding: 8px 16px;
+    font-weight: 600;
+    color: var(--text-gray);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.kanban-toggle-btn.active {
+    background: var(--bg-white);
+    color: var(--primary-blue);
+    box-shadow: var(--shadow-sm);
+}
+
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    align-items: flex-start;
+}
+
+.kanban-column {
+    flex: 1;
+    min-width: 250px;
+    max-width: 320px;
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: 16px;
+    padding: 14px;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.kanban-column.dragover-glow {
+    border-color: var(--primary-blue);
+    background-color: var(--card-glow);
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.kanban-column-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kanban-column-count {
+    background: var(--border-light);
+    color: var(--text-gray);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.kanban-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 400px;
+}
+
+.kanban-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: grab;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, opacity 0.2s;
+}
+
+.kanban-card:active {
+    cursor: grabbing;
+}
+
+.kanban-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.95);
+}
+
+/* Kanban spring settlement snap animation */
+.kanban-card.settle-spring {
+    animation: kanbanSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes kanbanSpring {
+    0% { transform: scale(0.92); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.kanban-card-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: var(--text-dark);
+}
+
+.kanban-card-meta {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.kanban-card-actions {
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 8px;
+    margin-top: 8px;
+    justify-content: space-between;
+}
+
+.kanban-card-btn {
+    border: none;
+    background: none;
+    color: var(--primary-blue);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.kanban-card-btn:hover {
+    background: var(--bg-light);
+}
+
+/* ---- Global Chat Drawer & Trigger ---- */
+.chat-drawer {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100%;
+    background: var(--glass-bg);
+    border-left: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-xl);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chat-drawer.open {
+    right: 0;
+}
+
+.chat-drawer-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.chat-drawer-close {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.chat-drawer-close:hover {
+    color: var(--danger-red);
+}
+
+.chat-contacts-pane,
+.chat-conversation-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.chat-conversation-pane {
+    display: none;
+}
+
+.chat-conversation-pane.active {
+    display: flex;
+}
+
+.chat-contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.chat-contact-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 6px;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.chat-contact-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.chat-contact-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.chat-contact-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: white;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.chat-online-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--success-green);
+    border: 2px solid var(--bg-white);
+    border-radius: 50%;
+}
+
+.chat-contact-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-contact-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-contact-preview {
+    font-size: 12px;
+    color: var(--text-gray);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-contact-badge {
+    background: var(--danger-red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.chat-conv-header {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-conv-back {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.chat-messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-msg-bubble {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.chat-msg-bubble.sent {
+    background: var(--primary-blue);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-msg-bubble.received {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--border-light);
+}
+
+.chat-msg-time {
+    font-size: 10px;
+    margin-top: 4px;
+    opacity: 0.7;
+    text-align: right;
+}
+
+.chat-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.chat-input-field {
+    flex: 1;
+    border-radius: 20px !important;
+    padding: 8px 16px !important;
+    border: 1px solid var(--border-light);
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-size: 13.5px;
+}
+
+.chat-send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.chat-send-btn:hover {
+    background: var(--primary-light);
+}
+
+/* Chat drawer trigger badge */
+.chat-trigger-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 84px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--primary-blue);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+
+.chat-trigger-btn:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-xl), 0 0 20px var(--primary-light);
+}
+
+.chat-trigger-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger-red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-white);
+}
+
+/* Typing bubble dots animation */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    border: 1px solid var(--border-light);
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--text-gray);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* ---- Skills circular progress bar meter ---- */
+.skill-match-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.skills-progress-ring {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skills-progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.skills-ring-circle {
+    fill: none;
+    stroke-width: 4;
+}
+
+.skills-ring-bg {
+    stroke: var(--border-light);
+}
+
+.skills-ring-bar {
+    stroke: var(--primary-blue);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skills-ring-text {
+    position: absolute;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.skills-match-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-top: 4px;
+}
+
+.skills-match-tag.matched {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-green);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.skills-match-tag.missing {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--text-gray);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+/* Profile Tag Inputs Styling */
+.skills-tags-input-container {
+    border: 1px solid var(--border-light);
+    background: var(--bg-white);
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.skills-tag-chip {
+    background: var(--primary-blue);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.skills-tag-chip-remove {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.skills-tag-chip-remove:hover {
+    color: white;
+}
+
+.skills-tag-input-raw {
+    border: none !important;
+    background: none !important;
+    padding: 4px 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    flex: 1;
+    min-width: 120px;
+}
+
+.skills-tag-input-raw:focus {
+    box-shadow: none !important;
+}
+
+/* ============================================================================
+   DEEP SLATE GENERAL FOOTER
+   ============================================================================ */
+.footer {
+    background: #090d16;
+    color: #94a3b8;
+    padding: 32px 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    z-index: 10;
+}
+
+.footer p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   TRANSLUCENT HIGH-CONTRAST ALERT OVERRIDES (DARK THEME)
+   ============================================================================ */
+[data-theme="dark"] .alert {
+    background: rgba(15, 23, 42, 0.9);
+    border-top-color: rgba(255, 255, 255, 0.05);
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    border-right-color: rgba(0, 0, 0, 0.2);
+    color: #f8fafc;
+}
+[data-theme="dark"] .alert-success { 
+    background: rgba(16, 185, 129, 0.15); 
+    color: #34d399; 
+}
+[data-theme="dark"] .alert-error, [data-theme="dark"] .alert-danger { 
+    background: rgba(239, 68, 68, 0.15); 
+    color: #f87171; 
+}
+[data-theme="dark"] .alert-warning { 
+    background: rgba(245, 158, 11, 0.15); 
+    color: #fbbf24; 
+}
+[data-theme="dark"] .alert-info { 
+    background: rgba(99, 102, 241, 0.15); 
+    color: #a5b4fc; 
+}
+
+/* ============================================================================
+   GLOBAL GLASSMORPHIC CUSTOM MODALS
+   ============================================================================ */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(9, 13, 22, 0.65);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.custom-modal-overlay.active {
+    opacity: 1;
+}
+
+.custom-modal-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.custom-modal-overlay.active .custom-modal-card {
+    transform: scale(1);
+}
+
+.custom-modal-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.custom-modal-header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.custom-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-gray);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+
+.custom-modal-close:hover {
+    color: var(--text-dark);
+    transform: scale(1.1);
+}
+
+.custom-modal-body {
+    padding: 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.custom-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .custom-modal-footer {
+    background: rgba(255, 255, 255, 0.02);
 }

@@ -6,9 +6,12 @@ from werkzeug.utils import secure_filename
 from models import JobPosting, Application, SavedJob, Resume
 from extensions import db, cache
 
+from sqlalchemy.orm import joinedload
+
 @cache.cached(timeout=300, key_prefix='active_job_postings')
 def get_cached_active_jobs():
-    return JobPosting.query.filter_by(status='active').all()
+    return JobPosting.query.options(joinedload(JobPosting.employer)).filter_by(status='active').all()
+
 
 from utils import calculate_distance, role_required, get_user_greeting
 from sqlalchemy import func
@@ -41,14 +44,9 @@ def job_seeker_dashboard():
     ).join(JobPosting).filter(JobPosting.status == 'active').group_by(Application.job_id).order_by(db.text('app_count DESC')).first()
     
     most_popular_job = None
-    if popular_job_query:
+    if popular_job_query and popular_job_query[1] >= 10:
         most_popular_job = JobPosting.query.get(popular_job_query[0])
         most_popular_job.application_count = popular_job_query[1]
-    else:
-        # Fallback to the latest active job if no applications have been submitted on any job yet
-        most_popular_job = JobPosting.query.filter_by(status='active').order_by(JobPosting.created_at.desc()).first()
-        if most_popular_job:
-            most_popular_job.application_count = 0
             
     return render_template('job_seeker_dashboard.html', 
                            applications=applications, 
@@ -87,9 +85,16 @@ def search_jobs():
         )
         
         if distance <= radius:
+            match_pct, matched_skills, missing_skills = calculate_skills_match(
+                current_user.skills,
+                job.skills_required
+            )
             jobs_with_distance.append({
                 'job': job,
-                'distance': round(distance, 2)
+                'distance': round(distance, 2),
+                'match_percentage': match_pct,
+                'matched_skills': matched_skills,
+                'missing_skills': missing_skills
             })
             
     jobs_with_distance.sort(key=lambda x: x['distance'])
@@ -120,7 +125,16 @@ def view_job(job_id):
         user_id=current_user.id
     ).first() if current_user.role == 'job_seeker' else None
     
-    return render_template('view_job.html', job=job, distance=distance, already_applied=already_applied, is_saved=is_saved)
+    match_percentage = None
+    matched_skills = []
+    missing_skills = []
+    if current_user.role == 'job_seeker':
+        match_percentage, matched_skills, missing_skills = calculate_skills_match(
+            current_user.skills,
+            job.skills_required
+        )
+        
+    return render_template('view_job.html', job=job, distance=distance, already_applied=already_applied, is_saved=is_saved, match_percentage=match_percentage, matched_skills=matched_skills, missing_skills=missing_skills)
 
 @seeker_bp.route('/jobs/<int:job_id>/apply', methods=['GET', 'POST'])
 @login_required
@@ -243,3 +257,92 @@ def unsave_job(job_id):
         flash('Job removed from watch list!', 'success')
     
     return redirect(url_for('seeker.job_seeker_dashboard'))
+
+
+def calculate_skills_match(seeker_skills_str, job_skills_str):
+    if not job_skills_str or not job_skills_str.strip():
+        return 100, [], []
+    if not seeker_skills_str or not seeker_skills_str.strip():
+        job_skills = [s.strip() for s in job_skills_str.split(',') if s.strip()]
+        return 0, [], job_skills
+        
+    seeker_skills = set(s.strip().lower() for s in seeker_skills_str.split(',') if s.strip())
+    job_skills_list = [s.strip() for s in job_skills_str.split(',') if s.strip()]
+    
+    matched = []
+    missing = []
+    
+    for s in job_skills_list:
+        if s.lower() in seeker_skills:
+            matched.append(s)
+        else:
+            missing.append(s)
+            
+    total = len(job_skills_list)
+    match_percentage = int((len(matched) / total) * 100) if total > 0 else 100
+    
+    return match_percentage, matched, missing
+
+
+@seeker_bp.route('/api/jobs/geocoded')
+@login_required
+@role_required('job_seeker')
+def get_geocoded_jobs():
+    keyword = request.args.get('keyword', '')
+    category = request.args.get('category', '')
+    radius = float(request.args.get('radius', 25))
+    
+    jobs = get_cached_active_jobs()
+    
+    if keyword:
+        keyword_lower = keyword.lower()
+        jobs = [j for j in jobs if keyword_lower in j.title.lower() or keyword_lower in j.description.lower()]
+        
+    if category:
+        jobs = [j for j in jobs if j.category == category]
+        
+    jobs_data = []
+    for job in jobs:
+        distance = calculate_distance(
+            current_user.latitude,
+            current_user.longitude,
+            job.latitude,
+            job.longitude
+        )
+        
+        if distance <= radius:
+            match_pct, matched_skills, missing_skills = calculate_skills_match(
+                current_user.skills,
+                job.skills_required
+            )
+            
+            jobs_data.append({
+                'id': job.id,
+                'title': job.title,
+                'company_name': job.employer.company_name,
+                'company_logo': job.employer.company_logo or None,
+                'category': job.category,
+                'employment_type': job.employment_type,
+                'salary_min': job.salary_min,
+                'salary_max': job.salary_max,
+                'city': job.city,
+                'latitude': job.latitude,
+                'longitude': job.longitude,
+                'distance': round(distance, 2),
+                'match_percentage': match_pct,
+                'matched_skills': matched_skills,
+                'missing_skills': missing_skills
+            })
+            
+    jobs_data.sort(key=lambda x: x['distance'])
+    
+    return {
+        'jobs': jobs_data,
+        'user': {
+            'latitude': current_user.latitude,
+            'longitude': current_user.longitude,
+            'full_name': current_user.full_name,
+            'skills': current_user.skills
+        }
+    }
+

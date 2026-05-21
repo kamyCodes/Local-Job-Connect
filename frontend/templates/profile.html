@@ -29,7 +29,7 @@
                     </h3>
                     <p style="margin-bottom: 8px;"><strong>Email:</strong> {{ current_user.email }}</p>
                     <p style="margin-bottom: 8px;"><strong>Phone:</strong> {{ current_user.phone or 'Not provided' }}</p>
-                    <p><strong>Address:</strong> {{ current_user.address }}, {{ current_user.city }}, {{ current_user.zip_code }}</p>
+                    <p><strong>Address:</strong> {{ current_user.address }}, {{ current_user.city }}, {{ current_user.state }}, {{ current_user.country }}, {{ current_user.zip_code }}</p>
                 </div>
 
                 {% if current_user.role == 'employer' %}

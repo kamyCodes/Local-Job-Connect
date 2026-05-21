@@ -65,6 +65,42 @@
                 <p style="line-height: 1.8; color: var(--text-dark); white-space: pre-wrap;">{{ job.description }}</p>
             </div>
 
+            <!-- Smart Skill Match Fit Meter -->
+            {% if current_user.role == 'job_seeker' and match_percentage is not none %}
+            <div style="margin-bottom: 32px; padding: 24px; border-radius: 16px; background: rgba(30, 58, 138, 0.03); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">
+                        <i class="fas fa-magic" style="color: var(--primary-light);"></i> Smart Skill Fit Match
+                    </h3>
+                    <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 16px;">
+                        Based on your profile skills vs the job requirements:
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        {% if matched_skills %}
+                            {% for skill in matched_skills %}
+                            <span class="skills-match-tag matched"><i class="fas fa-check-circle"></i> {{ skill }}</span>
+                            {% endfor %}
+                        {% endif %}
+                        {% if missing_skills %}
+                            {% for skill in missing_skills %}
+                            <span class="skills-match-tag missing"><i class="fas fa-exclamation-circle"></i> {{ skill }} (missing)</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="skill-match-container" style="flex-shrink: 0;">
+                    <div class="skills-progress-ring" style="width: 80px; height: 80px;">
+                        <svg width="80" height="80">
+                            <circle class="skills-ring-circle skills-ring-bg" cx="40" cy="40" r="34" style="stroke-width: 6;"></circle>
+                            <circle class="skills-ring-circle skills-ring-bar" cx="40" cy="40" r="34" stroke-dasharray="213.63" stroke-dashoffset="{{ 213.63 - (213.63 * match_percentage / 100) }}" style="stroke-width: 6; stroke: {% if match_percentage >= 80 %}var(--success-green){% elif match_percentage >= 50 %}var(--warning-yellow){% else %}var(--primary-blue){% endif %};"></circle>
+                        </svg>
+                        <span class="skills-ring-text" style="font-size: 16px; font-weight: 800;">{{ match_percentage }}%</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             <div style="margin-bottom: 32px;">
                 <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">
                     <i class="fas fa-map-marker-alt"></i> Location Details
@@ -90,9 +126,12 @@
                     {% endif %}
                 </div>
                 {% else %}
-                <div style="background: #d1fae5; color: #065f46; padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;">
-                    <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 8px;"></i>
-                    <div>You have already applied to this job</div>
+                <div style="background: #d1fae5; color: #065f46; padding: 20px; border-radius: 12px; text-align: center; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 8px; color: var(--success-green);"></i>
+                    <div style="margin-bottom: 16px;">You have already applied to this job</div>
+                    <button class="btn btn-secondary open-chat-btn" data-recipient-id="{{ job.employer_id }}" data-recipient-name="{{ job.employer.company_name or job.employer.full_name }}" style="margin: 0 auto; display: flex;">
+                        <i class="fas fa-comments"></i> Chat with Employer
+                    </button>
                 </div>
                 {% endif %}
             </div>

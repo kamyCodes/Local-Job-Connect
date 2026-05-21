@@ -7,7 +7,7 @@ import uuid
 import time
 from models import User
 from extensions import db
-from utils import geocode_address
+from utils import geocode_address, clean_street_address
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -59,7 +59,7 @@ def register():
         if country and len(country) > 100:
             errors['country'] = 'Country must not exceed 100 characters.'
         if not zip_code or not zip_code.isdigit():
-            errors['zip_code'] = 'ZIP Code must be a valid integer.'
+            errors['zip_code'] = 'ZIP Code must be a valid number.'
         else:
             if country == 'Nigeria':
                 if not re.match(r'^\d{6}$', zip_code):
@@ -97,11 +97,24 @@ def register():
             logo_path = os.path.join(current_app.config['LOGO_FOLDER'], unique_logo_name)
             logo_file.save(logo_path)
         
-        lat, lng = geocode_address(address, city, zip_code)
+        # Clean street address to remove redundant city, state, country names
+        address = clean_street_address(address, city, state, country)
+        
+        lat, lng = geocode_address(address, city, zip_code, country)
         
         if not lat or not lng:
-            # Graceful fallback to Abuja coordinates (centre of Nigeria) if Mapbox is unconfigured or geocoding fails
-            lat, lng = 9.0765, 7.3986
+            # Graceful fallback to country-specific centers (Lagos for Nigeria, country centers for US/UK/Canada)
+            c_lower = country.lower().strip() if country else 'nigeria'
+            if 'nigeria' in c_lower:
+                lat, lng = 6.5244, 3.3792
+            elif 'united states' in c_lower or c_lower == 'us' or 'usa' in c_lower:
+                lat, lng = 39.8283, -98.5795
+            elif 'united kingdom' in c_lower or c_lower == 'uk' or 'gb' in c_lower:
+                lat, lng = 55.3781, -3.4360
+            elif 'canada' in c_lower or c_lower == 'ca':
+                lat, lng = 56.1304, -106.3468
+            else:
+                lat, lng = 6.5244, 3.3792
         
         user = User(
             email=email,

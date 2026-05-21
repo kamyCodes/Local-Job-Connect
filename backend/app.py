@@ -7,6 +7,8 @@ from routes.auth import auth_bp
 from routes.seeker import seeker_bp
 from routes.employer import employer_bp
 from routes.main import main_bp
+from routes.chat import chat_bp
+
 
 def create_app():
     load_dotenv()
@@ -77,6 +79,8 @@ def create_app():
     app.register_blueprint(seeker_bp)
     app.register_blueprint(employer_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(chat_bp)
+
     
     with app.app_context():
         try:
@@ -97,6 +101,10 @@ def create_app():
                     conn.execute(db.text("ALTER TABLE users ADD COLUMN company_logo VARCHAR(255)"))
                 if 'logo_updated_at' not in user_columns:
                     conn.execute(db.text("ALTER TABLE users ADD COLUMN logo_updated_at TIMESTAMP"))
+                if 'address_updated_at' not in user_columns:
+                    conn.execute(db.text("ALTER TABLE users ADD COLUMN address_updated_at TIMESTAMP"))
+                if 'skills' not in user_columns:
+                    conn.execute(db.text("ALTER TABLE users ADD COLUMN skills TEXT"))
             
             # Alter 'job_postings' table if columns are missing
             job_columns = [c['name'] for c in inspector.get_columns('job_postings')]
@@ -105,6 +113,8 @@ def create_app():
                     conn.execute(db.text("ALTER TABLE job_postings ADD COLUMN state VARCHAR(100)"))
                 if 'country' not in job_columns:
                     conn.execute(db.text("ALTER TABLE job_postings ADD COLUMN country VARCHAR(100)"))
+                if 'skills_required' not in job_columns:
+                    conn.execute(db.text("ALTER TABLE job_postings ADD COLUMN skills_required TEXT"))
                     
             # Safe PostgreSQL migration for zip_code column conversion from VARCHAR to INTEGER (Requirement 3: integer zip code)
             if db.engine.dialect.name == 'postgresql':

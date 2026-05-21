@@ -8,12 +8,12 @@
         <form method="POST" action="{{ url_for('employer.create_job') }}">
             <div class="form-group">
                 <label>Job Title *</label>
-                <input type="text" name="title" required>
+                <input type="text" name="title" required maxlength="120">
             </div>
 
             <div class="form-group">
                 <label>Description *</label>
-                <textarea name="description" rows="6" required minlength="200" maxlength="12000" placeholder="Describe the role responsibilities, benefits, and requirements (minimum 200 characters)..."></textarea>
+                <textarea name="description" rows="6" required minlength="100" maxlength="12000" placeholder="Describe the role responsibilities, benefits, and requirements (minimum 100 characters)..."></textarea>
             </div>
 
             <div class="form-row row">
@@ -52,12 +52,23 @@
             <div class="form-row row">
                 <div class="form-group">
                     <label>Min Salary (₦)</label>
-                    <input type="number" name="salary_min">
+                    <input type="number" name="salary_min" id="salary_min">
                 </div>
                 <div class="form-group">
                     <label>Max Salary (₦)</label>
-                    <input type="number" name="salary_max">
+                    <input type="number" name="salary_max" id="salary_max">
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label for="skills_input_raw">Skills Required (Press Enter or Comma to add)</label>
+                <div class="skills-tags-input-container" id="skills-tags-container">
+                    <!-- Chips will be generated dynamically by JS -->
+                    <input type="text" id="skills_input_raw" class="skills-tag-input-raw" placeholder="Add a skill (e.g. Python, SQL)...">
+                </div>
+                <!-- Hidden input to store comma-separated string -->
+                <input type="hidden" name="skills_required" id="skills_hidden" value="">
+                <small><i class="fas fa-info-circle"></i> Add skills required to enable the compatibility fit meter for job seekers.</small>
             </div>
 
             <div style="margin-top:12px">

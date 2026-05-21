@@ -1,0 +1,17 @@
+<div class="kanban-card" draggable="true" data-application-id="{{ item.application.id }}" id="kanban-app-{{ item.application.id }}">
+    <div class="kanban-card-title">{{ item.application.applicant.full_name }}</div>
+    <div class="kanban-card-meta">
+        <span><i class="fas fa-envelope"></i> {{ item.application.applicant.email }}</span>
+        {% if item.application.applicant.phone %}
+        <span><i class="fas fa-phone"></i> {{ item.application.applicant.phone }}</span>
+        {% endif %}
+    </div>
+    <div class="kanban-card-actions">
+        <button class="kanban-card-btn open-chat-btn" data-recipient-id="{{ item.application.applicant_id }}" data-recipient-name="{{ item.application.applicant.full_name }}">
+            <i class="fas fa-comments"></i> Chat
+        </button>
+        {% if item.all_resumes %}
+        <a href="{{ url_for('employer.download_resume', filename=item.all_resumes[0].filename) }}" class="kanban-card-btn" download><i class="fas fa-file-pdf"></i> Resume</a>
+        {% endif %}
+    </div>
+</div>
