@@ -85,7 +85,11 @@ def login():
         
         user = User.query.filter_by(email=email).first()
         
-        if user and user.check_password(password):
+        if not user:
+            flash('No account found with this email address!', 'error')
+        elif not user.check_password(password):
+            flash('Incorrect password. Please try again!', 'error')
+        else:
             login_user(user)
             user.last_login = datetime.utcnow()
             db.session.commit()
@@ -94,8 +98,6 @@ def login():
                 return redirect(url_for('employer.employer_dashboard'))
             else:
                 return redirect(url_for('seeker.job_seeker_dashboard'))
-        else:
-            flash('Invalid email or password!', 'error')
     
     return render_template('login.html')
 
