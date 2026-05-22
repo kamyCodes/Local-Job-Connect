@@ -47,7 +47,15 @@ def clean_street_address(street_address, city, state, country):
 @cache.memoize(timeout=86400)  # Cache geocoded coordinate pairs for 24 hours
 def geocode_address(address, city, zip_code, country=None):
     """Convert address to latitude and longitude using Mapbox Geocoding API"""
-    full_address = f"{address}, {city}, {zip_code}"
+    address_parts = []
+    if address and str(address).strip(): address_parts.append(str(address).strip())
+    if city and str(city).strip(): address_parts.append(str(city).strip())
+    
+    zip_str = str(zip_code).strip() if zip_code is not None else ""
+    if zip_str and zip_str not in ['0', '00000', '000000', 'None']:
+        address_parts.append(zip_str)
+        
+    full_address = ", ".join(address_parts)
     api_key = os.getenv('MAPBOX_ACCESS_TOKEN')
     
     if not api_key:

@@ -14,8 +14,11 @@
     </script>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Local Job Connect - Find local job opportunities in your community">
-    <meta name="keywords" content="local jobs, employment, job search, hiring">
+    <meta name="description" content="Local Job Connect - Find premium local job opportunities in your community instantly. Discover tech, retail, and remote roles near you.">
+    <meta name="keywords" content="local jobs, employment, job search, hiring, careers, work near me">
+    <meta property="og:title" content="Local Job Connect">
+    <meta property="og:description" content="Find premium local job opportunities in your community instantly.">
+    <meta property="og:type" content="website">
     
     <!-- Theme Color for Mobile Browsers -->
     <meta name="theme-color" content="#1e3a8a">
@@ -27,9 +30,12 @@
     <title>{% block title %}Local Job Connect{% endblock %}</title>
     
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -273,6 +279,7 @@
 
     <!-- Leaflet.js library and application scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>

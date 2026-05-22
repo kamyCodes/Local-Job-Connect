@@ -25,6 +25,42 @@ def index():
                            local_employers=local_employers,
                            cities_covered=cities_covered)
 
+@main_bp.route('/sitemap.xml')
+def sitemap():
+    # Dynamic sitemap generation for Google Indexing
+    jobs = JobPosting.query.filter_by(status='active').all()
+    # Assume base url is from request
+    host = request.url_root.rstrip('/')
+    
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    # Add static pages
+    static_routes = ['/', '/auth/login', '/auth/register']
+    for route in static_routes:
+        xml.append(f'  <url><loc>{host}{route}</loc></url>')
+        
+    # Add active job pages
+    for job in jobs:
+        xml.append(f'  <url><loc>{host}/seeker/jobs/{job.id}</loc></url>')
+        
+    xml.append('</urlset>')
+    
+    return current_app.response_class('\n'.join(xml), mimetype='application/xml')
+
+@main_bp.route('/robots.txt')
+def robots():
+    host = request.url_root.rstrip('/')
+    txt = [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /employer/",
+        "Disallow: /seeker/dashboard",
+        "Disallow: /profile",
+        f"Sitemap: {host}/sitemap.xml"
+    ]
+    return current_app.response_class('\n'.join(txt), mimetype='text/plain')
+
 @main_bp.route('/profile')
 @login_required
 def profile():

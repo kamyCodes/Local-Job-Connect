@@ -156,6 +156,22 @@ class Message(db.Model):
     def __repr__(self):
         return f'<Message {self.id} from {self.sender_id} to {self.recipient_id}>'
 
+class FraudReport(db.Model):
+    __tablename__ = 'fraud_reports'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    reporter_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey('job_postings.id'), nullable=False)
+    reason = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(50), default='pending') # pending, reviewed, resolved
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    reporter = db.relationship('User', foreign_keys=[reporter_id])
+    job = db.relationship('JobPosting', backref='reports')
+
+    def __repr__(self):
+        return f'<FraudReport {self.id} for Job {self.job_id}>'
 
 @login_manager.user_loader
 def load_user(user_id):

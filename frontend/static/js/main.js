@@ -1063,6 +1063,13 @@ document.addEventListener('DOMContentLoaded', function () {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
+		const markersCluster = L.markerClusterGroup({
+			chunkedLoading: true,
+			spiderfyOnMaxZoom: true,
+			showCoverageOnHover: false,
+			zoomToBoundsOnClick: true
+		});
+
 		const markers = {};
 		const latLngs = [];
 
@@ -1109,7 +1116,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
 
-			const marker = L.marker(latLng).addTo(map).bindPopup(popupContent);
+			const marker = L.marker(latLng).bindPopup(popupContent);
+			markersCluster.addLayer(marker);
 			markers[id] = marker;
 
 			// Hover and click center syncing
@@ -1164,7 +1172,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			console.warn('Could not load user geocoded coordinates', err);
 		}
 
-		// Fit map bounds to show all markers beautifully
+		map.addLayer(markersCluster);
+
+		// Fit map to bounds of all plotted points show all markers beautifully
 		if (latLngs.length > 0) {
 			const bounds = L.latLngBounds(latLngs);
 			map.fitBounds(bounds, { padding: [50, 50] });

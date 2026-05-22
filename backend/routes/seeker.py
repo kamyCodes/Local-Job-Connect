@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
-from models import JobPosting, Application, SavedJob, Resume
+from models import JobPosting, Application, SavedJob, Resume, FraudReport
 from extensions import db, cache
 
 from sqlalchemy.orm import joinedload
@@ -288,6 +288,36 @@ def save_job(job_id):
         db.session.commit()
         flash('Job added to watch list!', 'success')
     
+    return redirect(url_for('seeker.view_job', job_id=job_id))
+
+@seeker_bp.route('/jobs/<int:job_id>/report', methods=['POST'])
+@login_required
+@role_required('job_seeker')
+def report_job(job_id):
+    reason = request.form.get('reason')
+    details = request.form.get('details')
+    
+    if not reason:
+        flash('Reason is required.', 'error')
+        return redirect(url_for('seeker.view_job', job_id=job_id))
+        
+    # Check if already reported
+    existing = FraudReport.query.filter_by(reporter_id=current_user.id, job_id=job_id).first()
+    if existing:
+        flash('You have already reported this job. Our team is investigating.', 'warning')
+        return redirect(url_for('seeker.view_job', job_id=job_id))
+        
+    report = FraudReport(
+        reporter_id=current_user.id,
+        job_id=job_id,
+        reason=reason,
+        details=details
+    )
+    
+    db.session.add(report)
+    db.session.commit()
+    
+    flash('Job reported successfully. Our moderation team will review this shortly.', 'success')
     return redirect(url_for('seeker.view_job', job_id=job_id))
 
 @seeker_bp.route('/jobs/<int:job_id>/unsave', methods=['POST'])
