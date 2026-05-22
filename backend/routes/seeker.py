@@ -101,6 +101,51 @@ def search_jobs():
     
     return render_template('search_jobs.html', jobs_with_distance=jobs_with_distance, keyword=keyword, category=category, radius=radius)
 
+@seeker_bp.route('/jobs/map')
+@login_required
+@role_required('job_seeker')
+def map_jobs():
+    keyword = request.args.get('keyword', '')
+    category = request.args.get('category', '')
+    radius = float(request.args.get('radius', 50))  # Default 50km for map view
+    
+    # Retrieve active job postings from the high-speed in-memory cache
+    jobs = get_cached_active_jobs()
+    
+    # Filter in-memory
+    if keyword:
+        keyword_lower = keyword.lower()
+        jobs = [j for j in jobs if keyword_lower in j.title.lower() or keyword_lower in j.description.lower()]
+        
+    if category:
+        jobs = [j for j in jobs if j.category == category]
+        
+    jobs_with_distance = []
+    for job in jobs:
+        distance = calculate_distance(
+            current_user.latitude,
+            current_user.longitude,
+            job.latitude,
+            job.longitude
+        )
+        
+        if distance <= radius:
+            match_pct, matched_skills, missing_skills = calculate_skills_match(
+                current_user.skills,
+                job.skills_required
+            )
+            jobs_with_distance.append({
+                'job': job,
+                'distance': round(distance, 2),
+                'match_percentage': match_pct,
+                'matched_skills': matched_skills,
+                'missing_skills': missing_skills
+            })
+            
+    jobs_with_distance.sort(key=lambda x: x['distance'])
+    
+    return render_template('map_jobs.html', jobs_with_distance=jobs_with_distance, keyword=keyword, category=category, radius=radius)
+
 @seeker_bp.route('/jobs/<int:job_id>')
 @login_required
 def view_job(job_id):

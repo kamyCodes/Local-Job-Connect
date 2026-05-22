@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Map View - Local Job Connect{% endblock %}
+
+{% block content %}
+<div class="map-jobs-fullscreen-wrapper" style="position: relative; height: calc(100vh - 72px); width: 100%; display: flex; flex-direction: column;">
+    
+    <!-- Floating Return Button -->
+    <a href="{{ url_for('seeker.search_jobs', keyword=keyword, category=category, radius=radius) }}" class="btn btn-secondary" style="position: absolute; top: 16px; left: 16px; z-index: 1000; box-shadow: var(--shadow-lg); background: var(--bg-white);">
+        <i class="fas fa-arrow-left"></i> Return to List View
+    </a>
+    
+    <div id="leaflet-job-map" style="flex: 1; width: 100%; height: 100%; z-index: 1;"></div>
+    
+    <!-- Hidden Job Cards for JS parsing -->
+    <div style="display: none;">
+        {% for item in jobs_with_distance %}
+        <div class="job-card" 
+            data-job-id="{{ item.job.id }}" 
+            data-lat="{{ item.job.latitude }}" 
+            data-lng="{{ item.job.longitude }}" 
+            data-title="{{ item.job.title }}" 
+            data-company="{{ item.job.employer.company_name }}" 
+            data-salary-min="{{ item.job.salary_min or '' }}" 
+            data-salary-max="{{ item.job.salary_max or '' }}" 
+            data-distance="{{ item.distance }}" 
+            data-category="{{ item.job.category }}" 
+            data-match="{{ item.match_percentage }}">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

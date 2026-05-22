@@ -1789,6 +1789,18 @@ body.menu-open {
     z-index: 10;
 }
 
+@media (max-width: 992px) {
+    .search-layout-split {
+        flex-direction: column;
+    }
+    .map-pane {
+        position: relative;
+        top: 0;
+        height: 400px;
+        order: -1; /* Place map above job list on mobile */
+    }
+}
+
 #leaflet-job-map {
     width: 100%;
     height: 100%;
